@@ -1,33 +1,25 @@
 package binary.ho.model;
 
-import binary.ho.util.FileNameExtractor;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public class Function {
 
     private final String name;
     private final String body;
-    private final Set<String> internalCalls;
-    private final Set<String> externalCalls;
     private final List<Query> queries;
-    private final boolean isRepresentative;
+    private final List<String> fucntionCalls;
 
-    public Function(String name, String body, String fileName) {
+    public Function(String name, String body) {
         this.name = name;
         this.body = body;
-        this.internalCalls = new HashSet<>();
-        this.externalCalls = new HashSet<>();
         this.queries = new LinkedList<>();
-        this.isRepresentative = isRepresentativeFunction(fileName, name);
+        this.fucntionCalls = new LinkedList<>();
     }
 
-    private boolean isRepresentativeFunction(String filePath, String functionName) {
-        String fileNameLastPart = FileNameExtractor.extractLastPart(filePath);
-        return fileNameLastPart.equals(functionName);
+    public void addQueries(List<Query> queries) {
+        this.queries.addAll(queries);
     }
 
     @Override
@@ -52,15 +44,7 @@ public class Function {
         return name;
     }
 
-    public boolean isRepresentative() {
-        return isRepresentative;
-    }
-
     public String getBody() {
         return body;
-    }
-
-    public void addSqlTypes(List<Query> queries) {
-        this.queries.addAll(queries);
     }
 }
