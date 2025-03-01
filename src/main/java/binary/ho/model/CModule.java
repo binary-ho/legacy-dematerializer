@@ -14,10 +14,10 @@ public class CModule {
     public CModule(String filePath, List<Function> functions) {
         this.filePath = filePath;
         this.representativeFunction = findRepresentativeFunction(functions);
-        this.functions = createMap(functions);
+        this.functions = collectToMap(functions);
     }
 
-    private Map<String, Function> createMap(List<Function> functions) {
+    private Map<String, Function> collectToMap(List<Function> functions) {
         return functions.stream()
             .collect(Collectors.toMap(Function::getName, function -> function));
     }

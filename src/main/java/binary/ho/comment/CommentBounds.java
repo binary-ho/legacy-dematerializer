@@ -1,4 +1,4 @@
-package binary.ho.util.comment;
+package binary.ho.comment;
 
 public class CommentBounds {
 

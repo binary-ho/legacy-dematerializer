@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 public class ProC_QueryParser {
 
+    // TODO: 문자열에 대한 고려가 없다.
     private static final Pattern PRO_C_SQL_PATTERN = Pattern.compile(
         "EXEC\\s+SQL\\s+([^;]*);",
         Pattern.CASE_INSENSITIVE | Pattern.DOTALL
