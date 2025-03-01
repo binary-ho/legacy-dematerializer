@@ -1,10 +1,14 @@
 package binary.ho.model;
 
 import binary.ho.parser.FileNameExtractor;
-
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public class Function {
+
     private final String name;
     private final String body;
     private final Set<String> internalCalls;
@@ -24,5 +28,23 @@ public class Function {
     private boolean isRepresentativeFunction(String filePath, String functionName) {
         String fileNameLastPart = FileNameExtractor.extractLastPart(filePath);
         return fileNameLastPart.equals(functionName);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof Function)) {
+            return false;
+        }
+        Function function = (Function) other;
+        return Objects.equals(name, function.name)
+            && Objects.equals(body, function.body);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }
