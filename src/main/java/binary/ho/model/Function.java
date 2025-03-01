@@ -13,7 +13,7 @@ public class Function {
     private final String body;
     private final Set<String> internalCalls;
     private final Set<String> externalCalls;
-    private final List<String> sqlTypes;
+    private final List<Query> queries;
     private final boolean isRepresentative;
 
     public Function(String name, String body, String fileName) {
@@ -21,7 +21,7 @@ public class Function {
         this.body = body;
         this.internalCalls = new HashSet<>();
         this.externalCalls = new HashSet<>();
-        this.sqlTypes = new LinkedList<>();
+        this.queries = new LinkedList<>();
         this.isRepresentative = isRepresentativeFunction(fileName, name);
     }
 
@@ -54,5 +54,13 @@ public class Function {
 
     public boolean isRepresentative() {
         return isRepresentative;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void addSqlTypes(List<Query> queries) {
+        this.queries.addAll(queries);
     }
 }
