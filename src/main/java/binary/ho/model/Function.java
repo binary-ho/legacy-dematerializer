@@ -1,6 +1,6 @@
 package binary.ho.model;
 
-import binary.ho.parser.FileNameExtractor;
+import binary.ho.util.FileNameExtractor;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;

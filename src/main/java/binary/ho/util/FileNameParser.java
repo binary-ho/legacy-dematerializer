@@ -1,4 +1,4 @@
-package binary.ho.parser;
+package binary.ho.util;
 
 public class FileNameParser {
 

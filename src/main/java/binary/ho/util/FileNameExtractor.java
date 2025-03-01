@@ -1,6 +1,7 @@
-package binary.ho.parser;
+package binary.ho.util;
 
 public class FileNameExtractor {
+
     private static final char DELIMETER = '_';
 
     public static String extractLastPart(String fileName) {

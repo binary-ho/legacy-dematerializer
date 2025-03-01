@@ -1,6 +1,6 @@
 package binary.ho.model;
 
-import binary.ho.parser.FileNameParser;
+import binary.ho.util.FileNameParser;
 import java.util.HashMap;
 import java.util.Map;
 
