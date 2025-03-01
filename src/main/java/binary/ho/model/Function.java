@@ -47,4 +47,12 @@ public class Function {
     public int hashCode() {
         return Objects.hash(name);
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isRepresentative() {
+        return isRepresentative;
+    }
 }
