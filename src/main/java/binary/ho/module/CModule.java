@@ -1,7 +1,7 @@
 package binary.ho.module;
 
 import binary.ho.function.Function;
-import binary.ho.function.MissingFunctionFactory;
+import binary.ho.function.MissingFunction;
 import binary.ho.util.FileNameExtractor;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +26,7 @@ public class CModule {
 
     private Function findRepresentativeFunction(String moduleName, List<Function> functions) {
         if (functions.isEmpty()) {
-            return MissingFunctionFactory.create();
+            return MissingFunction.create();
         }
 
         return functions.stream()

@@ -15,7 +15,7 @@ public class ModuleMapper {
 
     public CModule get(String moduleName) {
         return nameToModule.getOrDefault(
-            moduleName, MissingModuleFactory.create()
+            moduleName, MissingModule.create()
         );
     }
 }

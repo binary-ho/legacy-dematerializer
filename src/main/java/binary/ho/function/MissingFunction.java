@@ -2,7 +2,7 @@ package binary.ho.function;
 
 import java.util.List;
 
-public class MissingFunctionFactory {
+public class MissingFunction {
 
     private static final String MISSING_FUNCTION = "MISSING";
 

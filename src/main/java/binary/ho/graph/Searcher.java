@@ -3,19 +3,17 @@ package binary.ho.graph;
 import binary.ho.function.Function;
 import binary.ho.module.CModule;
 import binary.ho.module.ModuleMapper;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 public class Searcher {
 
     private final ModuleMapper moduleMapper;
-    private final Set<String> visiting;
+    private final VisitingNodes visitingNodes;
 
     private Searcher(ModuleMapper moduleMapper) {
         this.moduleMapper = moduleMapper;
-        this.visiting = new HashSet<>();
+        this.visitingNodes = new VisitingNodes();
     }
 
     public static Node searchFromModule(String moduleName, ModuleMapper moduleMapper) {
@@ -30,8 +28,8 @@ public class Searcher {
     }
 
     private Node search(CModule module, String current) {
-        if (visiting.contains(current)) {
-            return RecursiveNode.createNode(current);
+        if (visitingNodes.isVisiting(current)) {
+            return RecursiveNode.create(current);
         }
 
         if (module.isExternalCall(current)) {
@@ -43,9 +41,9 @@ public class Searcher {
             return Node.createdLeafNode(function.getName());
         }
 
-        visiting.add(current);
+        visitingNodes.visit(current);
         List<Node> nextNodes = getNextNodes(module, function);
-        visiting.remove(current);
+        visitingNodes.exit(current);
         return Node.createNode(current, nextNodes);
     }
 
