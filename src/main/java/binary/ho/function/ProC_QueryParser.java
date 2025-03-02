@@ -1,4 +1,4 @@
-package binary.ho.util.function;
+package binary.ho.function;
 
 import binary.ho.model.Query;
 import binary.ho.model.SqlType;
@@ -9,13 +9,12 @@ import java.util.regex.Pattern;
 
 public class ProC_QueryParser {
 
-    // TODO: 문자열에 대한 고려가 없다.
     private static final Pattern PRO_C_SQL_PATTERN = Pattern.compile(
         "EXEC\\s+SQL\\s+([^;]*);",
         Pattern.CASE_INSENSITIVE | Pattern.DOTALL
     );
 
-    public List<Query> parse(String code) {
+    public static List<Query> parse(String code) {
         Matcher matcher = PRO_C_SQL_PATTERN.matcher(code);
 
         List<Query> queries = new LinkedList<>();
@@ -27,7 +26,8 @@ public class ProC_QueryParser {
         return queries;
     }
 
-    public String removeSqlStatements(String code) {
-        return PRO_C_SQL_PATTERN.matcher(code).replaceAll("");
+    public static String removeSqlStatements(String code) {
+        return PRO_C_SQL_PATTERN.matcher(code)
+            .replaceAll("");
     }
 }

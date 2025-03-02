@@ -1,5 +1,6 @@
 package binary.ho.model;
 
+import binary.ho.function.Function;
 import binary.ho.util.FileNameExtractor;
 import java.util.List;
 import java.util.Map;

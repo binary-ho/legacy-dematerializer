@@ -1,6 +1,6 @@
-package binary.ho.model;
+package binary.ho.function;
 
-import java.util.LinkedList;
+import binary.ho.model.Query;
 import java.util.List;
 import java.util.Objects;
 
@@ -9,17 +9,13 @@ public class Function {
     private final String name;
     private final String body;
     private final List<Query> queries;
-    private final List<String> fucntionCalls;
+    private final List<String> functionCalls;
 
-    public Function(String name, String body) {
+    public Function(String name, String body, List<Query> queries, List<String> functionCalls) {
         this.name = name;
         this.body = body;
-        this.queries = new LinkedList<>();
-        this.fucntionCalls = new LinkedList<>();
-    }
-
-    public void addQueries(List<Query> queries) {
-        this.queries.addAll(queries);
+        this.queries = queries;
+        this.functionCalls = functionCalls;
     }
 
     @Override

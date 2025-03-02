@@ -2,7 +2,7 @@ package binary.ho.comment;
 
 public class CommentRemover {
 
-    public String removeComments(String code) {
+    public static String removeComments(String code) {
         StringBuilder result = new StringBuilder();
         CommentBounds commentBounds = new CommentBounds(code);
 
