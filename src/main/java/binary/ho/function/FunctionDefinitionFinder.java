@@ -1,6 +1,8 @@
 package binary.ho.function;
 
-import binary.ho.model.Query;
+import binary.ho.query.ProC_QueryParser;
+import binary.ho.query.ProC_QueryRemover;
+import binary.ho.query.Query;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -11,13 +13,20 @@ public class FunctionDefinitionFinder {
     private final Pattern functionDefinitionPattern;
     private final Set<String> excludeFunctions;
     private final FunctionCallFinder functionCallFinder;
+    private final ProC_QueryParser proC_queryParser;
+    private final ProC_QueryRemover proC_queryRemover;
 
     public FunctionDefinitionFinder(
         Pattern functionDefinitionPattern,
-        Set<String> excludeFunctions, FunctionCallFinder functionCallFinder) {
+        Set<String> excludeFunctions,
+        FunctionCallFinder functionCallFinder,
+        ProC_QueryParser proC_QueryParser,
+        ProC_QueryRemover proC_QueryRemover) {
         this.functionDefinitionPattern = functionDefinitionPattern;
         this.excludeFunctions = excludeFunctions;
         this.functionCallFinder = functionCallFinder;
+        this.proC_queryParser = proC_QueryParser;
+        this.proC_queryRemover = proC_QueryRemover;
     }
 
     public boolean hasNext(CodeSearchScope codeSearchScope) {
@@ -37,7 +46,6 @@ public class FunctionDefinitionFinder {
             return hasNext(codeSearchScope);
         }
 
-        // 2. 함수 범위 구하기
         int startIndex = codeSearchScope.getScopeStart() + matcher.end() - 1;
         int endIndex = findMatchingBrace(targetCode, startIndex);
         if (endIndex == -1) {
@@ -61,9 +69,8 @@ public class FunctionDefinitionFinder {
 
         String functionBody = targetCode.substring(startIndex + 1, endIndex);
 
-        List<Query> queries = ProC_QueryParser.parse(functionBody);
-
-        String removedQuery = ProC_QueryParser.removeSqlStatements(functionBody);
+        List<Query> queries = proC_queryParser.parse(functionBody);
+        String removedQuery = proC_queryRemover.removeSqlStatements(functionBody);
         String functionName = matcher.group(1);
         List<String> functionCalls = functionCallFinder.findAll(functionName, removedQuery);
 

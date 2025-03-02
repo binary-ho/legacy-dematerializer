@@ -1,4 +1,4 @@
-package binary.ho.model;
+package binary.ho.query;
 
 public class Query {
 

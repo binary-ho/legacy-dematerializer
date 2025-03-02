@@ -1,0 +1,27 @@
+package binary.ho.query;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class ProC_QueryParser {
+
+    private final Pattern proC_SqlPattern;
+
+    public ProC_QueryParser(Pattern proC_SqlPattern) {
+        this.proC_SqlPattern = proC_SqlPattern;
+    }
+
+    public List<Query> parse(String code) {
+        Matcher matcher = proC_SqlPattern.matcher(code);
+
+        List<Query> queries = new LinkedList<>();
+        while (matcher.find()) {
+            String query = matcher.group();
+            SqlType type = SqlType.fromString(query);
+            queries.add(new Query(type, query));
+        }
+        return queries;
+    }
+}

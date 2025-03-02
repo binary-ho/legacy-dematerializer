@@ -1,6 +1,6 @@
 package binary.ho.function;
 
-import binary.ho.model.Query;
+import binary.ho.query.Query;
 import java.util.List;
 import java.util.Objects;
 
