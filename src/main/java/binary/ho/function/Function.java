@@ -9,13 +9,13 @@ public class Function {
     private final String name;
     private final String body;
     private final List<Query> queries;
-    private final List<String> functionCalls;
+    private final List<String> callees;
 
-    public Function(String name, String body, List<Query> queries, List<String> functionCalls) {
+    public Function(String name, String body, List<Query> queries, List<String> callees) {
         this.name = name;
         this.body = body;
         this.queries = queries;
-        this.functionCalls = functionCalls;
+        this.callees = callees;
     }
 
     @Override
@@ -42,5 +42,13 @@ public class Function {
 
     public String getBody() {
         return body;
+    }
+
+    public List<String> getCallees() {
+        return List.copyOf(callees);
+    }
+
+    public boolean hasNoCallee() {
+        return callees.isEmpty();
     }
 }
