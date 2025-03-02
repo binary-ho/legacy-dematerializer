@@ -27,4 +27,8 @@ public class Node {
     public List<Node> getNextNodes() {
         return nextNodes;
     }
+
+    public boolean isLeaf() {
+        return nextNodes.isEmpty();
+    }
 }
