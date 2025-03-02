@@ -6,14 +6,13 @@ import java.util.Objects;
 
 public class Function {
 
+    // TODO: 현재는 같은 이름의 함수가 없지만, 직접 테스트 해봐야 한다.
     private final String name;
-    private final String body;
     private final List<Query> queries;
     private final List<String> callees;
 
-    public Function(String name, String body, List<Query> queries, List<String> callees) {
+    public Function(String name, List<Query> queries, List<String> callees) {
         this.name = name;
-        this.body = body;
         this.queries = queries;
         this.callees = callees;
     }
@@ -27,8 +26,7 @@ public class Function {
             return false;
         }
         Function function = (Function) other;
-        return Objects.equals(name, function.name)
-            && Objects.equals(body, function.body);
+        return Objects.equals(name, function.name);
     }
 
     @Override
@@ -38,10 +36,6 @@ public class Function {
 
     public String getName() {
         return name;
-    }
-
-    public String getBody() {
-        return body;
     }
 
     public List<String> getCallees() {
