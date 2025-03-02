@@ -47,8 +47,8 @@ public class CModule {
         return representativeFunction;
     }
 
-    public Map<String, Function> getFunctions() {
-        return functions;
+    public Function getFunction(String functionName) {
+        return functions.get(functionName);
     }
 
     public boolean isExternalCall(String functionName) {
