@@ -11,7 +11,7 @@ public class FileNameExtractor {
         return extractLastPartByDelimeter(removedExtension);
     }
 
-    public static String getFileName(String filePath) {
+    private static String getFileName(String filePath) {
         int fileNameIndex = filePath.lastIndexOf(PATH_DELIMETER) + 1;
         return filePath.substring(fileNameIndex);
     }

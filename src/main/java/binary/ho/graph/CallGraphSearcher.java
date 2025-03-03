@@ -42,7 +42,7 @@ public class CallGraphSearcher {
 
         Function function = module.getFunction(current);
         if (function.hasNoCallee()) {
-            return Node.createdLeafNode(function.getName());
+            return Node.createLeafNode(function.getName());
         }
 
         visitingNodes.visit(current);
@@ -66,6 +66,6 @@ public class CallGraphSearcher {
     }
 
     private Node createSqlNode(Callee callee) {
-        return Node.createdLeafNode(QUERY_PREFIX + callee.getName());
+        return Node.createLeafNode(QUERY_PREFIX + callee.getName());
     }
 }

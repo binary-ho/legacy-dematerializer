@@ -56,4 +56,20 @@ public class ConfigManager {
         }
         return Set.of(functions.split(";"));
     }
+
+    public Pattern getFunctionDefinitionPattern() {
+        return functionDefinitionPattern;
+    }
+
+    public Pattern getFunctionCallPattern() {
+        return functionCallPattern;
+    }
+
+    public Pattern getProcSqlPattern() {
+        return procSqlPattern;
+    }
+
+    public Set<String> getExcludeFunctions() {
+        return excludeFunctions;
+    }
 }
