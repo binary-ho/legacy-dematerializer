@@ -80,9 +80,6 @@ public class FunctionDefinitionFinder {
     }
 
     private int findMatchingBrace(String text, int startPos) {
-        System.out.println("==Text Start==");
-        System.out.println(text);
-        System.out.println("==Text End==");
         int braceCount = 1;
         for (int i = startPos + 1; i < text.length(); i++) {
             char c = text.charAt(i);
@@ -92,13 +89,11 @@ public class FunctionDefinitionFinder {
             } else if (c == '}') {
                 braceCount--;
                 if (braceCount == 0) {
-                    System.out.println("=======found=======");
                     return i;
                 }
             }
         }
 
-        System.out.println("=======notfound=======");
         return -1;
     }
 }
