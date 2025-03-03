@@ -2,10 +2,13 @@ package binary.ho.function.callee;
 
 import binary.ho.query.Query;
 import binary.ho.query.SqlType;
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Callee {
+public class Callee implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final String name;
     private final CalleeType type;

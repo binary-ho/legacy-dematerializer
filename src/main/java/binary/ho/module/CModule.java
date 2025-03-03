@@ -3,12 +3,15 @@ package binary.ho.module;
 import binary.ho.file.FileNameExtractor;
 import binary.ho.function.Function;
 import binary.ho.function.MissingFunction;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class CModule {
+public class CModule implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
     private final String moduleName;
     private final Map<String, Function> functions;
     private final Function representativeFunction;

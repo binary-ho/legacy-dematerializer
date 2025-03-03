@@ -1,6 +1,10 @@
 package binary.ho.query;
 
-public class Query {
+import java.io.Serializable;
+
+public class Query implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final SqlType type;
 

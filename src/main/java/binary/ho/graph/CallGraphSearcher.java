@@ -4,29 +4,29 @@ import binary.ho.function.Function;
 import binary.ho.function.callee.Callee;
 import binary.ho.function.callee.CalleeType;
 import binary.ho.module.CModule;
-import binary.ho.module.ModuleMapper;
+import binary.ho.module.CModules;
 import java.util.LinkedList;
 import java.util.List;
 
 public class CallGraphSearcher {
 
-    private final ModuleMapper moduleMapper;
+    private final CModules CModules;
     private final VisitingNodes visitingNodes;
 
     private static final String QUERY_PREFIX = "(QUERY) ";
 
-    private CallGraphSearcher(ModuleMapper moduleMapper) {
-        this.moduleMapper = moduleMapper;
+    private CallGraphSearcher(CModules CModules) {
+        this.CModules = CModules;
         this.visitingNodes = new VisitingNodes();
     }
 
-    public static Node searchFromModule(String moduleName, ModuleMapper moduleMapper) {
-        CallGraphSearcher callGraphSearcher = new CallGraphSearcher(moduleMapper);
+    public static Node searchFromModule(String moduleName, CModules CModules) {
+        CallGraphSearcher callGraphSearcher = new CallGraphSearcher(CModules);
         return callGraphSearcher.search(moduleName);
     }
 
     private Node search(String moduleName) {
-        CModule cModule = moduleMapper.get(moduleName);
+        CModule cModule = CModules.get(moduleName);
         Function representativeFunction = cModule.getRepresentativeFunction();
         return search(cModule, representativeFunction.getName());
     }
