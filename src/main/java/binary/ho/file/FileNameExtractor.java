@@ -1,12 +1,19 @@
-package binary.ho.util;
+package binary.ho.file;
 
 public class FileNameExtractor {
 
     private static final char DELIMETER = '_';
+    private static final char PATH_DELIMETER = '/';
 
-    public static String extractLastPart(String fileName) {
+    public static String extractLastPart(String filePath) {
+        String fileName = getFileName(filePath);
         String removedExtension = removeFileExtension(fileName);
         return extractLastPartByDelimeter(removedExtension);
+    }
+
+    public static String getFileName(String filePath) {
+        int fileNameIndex = filePath.lastIndexOf(PATH_DELIMETER) + 1;
+        return filePath.substring(fileNameIndex);
     }
 
     private static String removeFileExtension(String fileName) {

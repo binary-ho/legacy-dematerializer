@@ -6,19 +6,19 @@ import binary.ho.module.ModuleMapper;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Searcher {
+public class CallGraphSearcher {
 
     private final ModuleMapper moduleMapper;
     private final VisitingNodes visitingNodes;
 
-    private Searcher(ModuleMapper moduleMapper) {
+    private CallGraphSearcher(ModuleMapper moduleMapper) {
         this.moduleMapper = moduleMapper;
         this.visitingNodes = new VisitingNodes();
     }
 
     public static Node searchFromModule(String moduleName, ModuleMapper moduleMapper) {
-        Searcher searcher = new Searcher(moduleMapper);
-        return searcher.search(moduleName);
+        CallGraphSearcher callGraphSearcher = new CallGraphSearcher(moduleMapper);
+        return callGraphSearcher.search(moduleName);
     }
 
     private Node search(String moduleName) {

@@ -1,8 +1,8 @@
 package binary.ho.module;
 
+import binary.ho.file.FileNameExtractor;
 import binary.ho.function.Function;
 import binary.ho.function.MissingFunction;
-import binary.ho.util.FileNameExtractor;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
