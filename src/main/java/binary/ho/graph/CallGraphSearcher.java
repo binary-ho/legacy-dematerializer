@@ -33,7 +33,7 @@ public class CallGraphSearcher {
 
     private Node search(CModule module, String current) {
         if (visitingNodes.isVisiting(current)) {
-            return RecursiveNode.create(current);
+            return RecursiveNodeFactory.create(current);
         }
 
         if (module.isExternalCall(current)) {

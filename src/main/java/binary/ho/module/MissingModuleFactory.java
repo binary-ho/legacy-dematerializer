@@ -1,15 +1,18 @@
 package binary.ho.module;
 
 import binary.ho.function.Function;
-import binary.ho.function.MissingFunction;
+import binary.ho.function.MissingFunctionFactory;
 import java.util.List;
 
-public class MissingModule {
+public class MissingModuleFactory {
 
     public static final String MISSING_MODULE = "MISSING";
 
+    private MissingModuleFactory() {
+    }
+
     public static CModule create() {
-        Function missingFunction = MissingFunction.create();
+        Function missingFunction = MissingFunctionFactory.create();
         return new CModule(MISSING_MODULE, List.of(missingFunction));
     }
 }

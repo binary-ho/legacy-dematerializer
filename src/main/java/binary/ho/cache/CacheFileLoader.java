@@ -4,10 +4,11 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class CacheFileLoader<T> {
+public class CacheFileLoader<T extends Serializable> {
 
     private final String cacheFilePath;
     private final Class<T> cacheObjectType;

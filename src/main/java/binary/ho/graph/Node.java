@@ -16,7 +16,7 @@ public class Node {
         return new Node(functionName, nextNodes);
     }
 
-    public static Node createdLeafNode(String functionName) {
+    public static Node createLeafNode(String functionName) {
         return new Node(functionName, List.of());
     }
 
