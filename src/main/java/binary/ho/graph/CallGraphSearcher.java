@@ -1,6 +1,8 @@
 package binary.ho.graph;
 
 import binary.ho.function.Function;
+import binary.ho.function.callee.Callee;
+import binary.ho.function.callee.CalleeType;
 import binary.ho.module.CModule;
 import binary.ho.module.ModuleMapper;
 import java.util.LinkedList;
@@ -10,6 +12,8 @@ public class CallGraphSearcher {
 
     private final ModuleMapper moduleMapper;
     private final VisitingNodes visitingNodes;
+
+    private static final String QUERY_PREFIX = "(QUERY) ";
 
     private CallGraphSearcher(ModuleMapper moduleMapper) {
         this.moduleMapper = moduleMapper;
@@ -49,10 +53,19 @@ public class CallGraphSearcher {
 
     private List<Node> getNextNodes(CModule module, Function function) {
         List<Node> nextNodes = new LinkedList<>();
-        for (String callee : function.getCallees()) {
-            Node next = search(module, callee);
+        for (Callee callee : function.getCallees()) {
+            if (CalleeType.SQL == callee.getType()) {
+                nextNodes.add(createSqlNode(callee));
+                continue;
+            }
+
+            Node next = search(module, callee.getName());
             nextNodes.add(next);
         }
         return nextNodes;
+    }
+
+    private Node createSqlNode(Callee callee) {
+        return Node.createdLeafNode(QUERY_PREFIX + callee.getName());
     }
 }

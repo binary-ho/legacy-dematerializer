@@ -3,10 +3,12 @@ package binary.ho.query;
 public class Query {
 
     private final SqlType type;
-    private final String body;
 
-    public Query(SqlType type, String body) {
+    public Query(SqlType type) {
         this.type = type;
-        this.body = body;
+    }
+
+    public SqlType getType() {
+        return type;
     }
 }

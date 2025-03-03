@@ -74,7 +74,7 @@ public class FunctionDefinitionFinder {
         String functionName = matcher.group(1);
         List<String> functionCalls = functionCallFinder.findAll(functionName, removedQuery);
 
-        return new Function(functionName, queries, functionCalls);
+        return Function.create(functionName, queries, functionCalls);
     }
 
     private int findMatchingBrace(String text, int startPos) {

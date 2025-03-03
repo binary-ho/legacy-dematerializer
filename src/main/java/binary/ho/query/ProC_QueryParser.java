@@ -20,7 +20,7 @@ public class ProC_QueryParser {
         while (matcher.find()) {
             String query = matcher.group();
             SqlType type = SqlType.fromString(query);
-            queries.add(new Query(type, query));
+            queries.add(new Query(type));
         }
         return queries;
     }

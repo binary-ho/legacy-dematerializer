@@ -1,6 +1,8 @@
 package binary.ho.function;
 
+import binary.ho.function.callee.Callee;
 import binary.ho.query.Query;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -8,13 +10,17 @@ public class Function {
 
     // TODO: 현재는 같은 이름의 함수가 없지만, 직접 테스트 해봐야 한다.
     private final String name;
-    private final List<Query> queries;
-    private final List<String> callees;
+    private final List<Callee> callees;
 
-    public Function(String name, List<Query> queries, List<String> callees) {
+    private Function(String name, List<Callee> callees) {
         this.name = name;
-        this.queries = queries;
         this.callees = callees;
+    }
+
+    public static Function create(String name, List<Query> queries, List<String> calleeNames) {
+        List<Callee> callee = new LinkedList<>(Callee.from(calleeNames));
+        callee.addAll(Callee.fromQueries(queries));
+        return new Function(name, callee);
     }
 
     @Override
@@ -38,7 +44,7 @@ public class Function {
         return name;
     }
 
-    public List<String> getCallees() {
+    public List<Callee> getCallees() {
         return List.copyOf(callees);
     }
 
