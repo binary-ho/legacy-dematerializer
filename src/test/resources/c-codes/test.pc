@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+/* 데이터베이스에서 데이터를 가져오는 함수 (Pro*C 예제) */
+void fetchData() {
+    EXEC SQL BEGIN DECLARE SECTION;
+    int empId;
+    char empName[50];
+    EXEC SQL END DECLARE SECTION;
+    
+    empId = 1;
+    // 여러 줄에 걸친 EXEC SQL SELECT 문 예제
+    EXEC SQL 
+        SELECT name 
+        INTO :empName 
+        FROM employees 
+        WHERE id = :empId;
+    
+    /* CURSOR 선언 및 사용 예제 */
+    EXEC SQL DECLARE empCursor CURSOR FOR 
+        SELECT id, name FROM employees;
+    
+    EXEC SQL OPEN empCursor;
+    while (1) {
+        EXEC SQL FETCH empCursor INTO :empId, :empName;
+        if (EXEC SQL INCLUDE.sqlcode != 0) break;  // 조회 완료 시 루프 종료
+        printf("Fetched employee: %d, %s\n", empId, empName);
+    }
+    EXEC SQL CLOSE empCursor;
+}
+
+int main() {
+    fetchData();  // fetchData 함수 호출 (EXEC SQL 사용)
+    return 0;
+}

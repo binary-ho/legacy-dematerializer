@@ -17,7 +17,11 @@ public class FileNameExtractor {
     }
 
     private static String removeFileExtension(String fileName) {
-        return fileName.replaceAll("\\.(?:pc|c)$", "");
+        String[] split = fileName.split("\\.");
+        if (split.length == 0) {
+            return "";
+        }
+        return split[0];
     }
 
     private static String extractLastPartByDelimeter(String fileName) {

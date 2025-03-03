@@ -40,16 +40,15 @@ public class FunctionDefinitionFinder {
             return false;
         }
 
-        String functionName = matcher.group(1);
-        if (excludeFunctions.contains(functionName)) {
-            codeSearchScope.advance(matcher.end());
-            return hasNext(codeSearchScope);
-        }
-
-        int startIndex = codeSearchScope.getScopeStart() + matcher.end() - 1;
+        int startIndex = matcher.end() - 1;
         int endIndex = findMatchingBrace(targetCode, startIndex);
         if (endIndex == -1) {
-            codeSearchScope.advance(matcher.end());
+            throw new IllegalStateException("No matching brace found. wrong file");
+        }
+
+        String functionName = matcher.group(1);
+        if (excludeFunctions.contains(functionName)) {
+            codeSearchScope.move(codeSearchScope.getScopeStart() + endIndex);
             return hasNext(codeSearchScope);
         }
         return true;
@@ -62,10 +61,13 @@ public class FunctionDefinitionFinder {
 
         String targetCode = codeSearchScope.getRemainingCode();
         Matcher matcher = functionDefinitionPattern.matcher(targetCode);
+        if (!matcher.find()) {
+            throw new IllegalStateException("No function definition found");
+        }
 
-        int startIndex = codeSearchScope.getScopeStart() + matcher.end() - 1;
+        int startIndex = matcher.end() - 1;
         int endIndex = findMatchingBrace(targetCode, startIndex);
-        codeSearchScope.advance(endIndex + 1);
+        codeSearchScope.move(codeSearchScope.getScopeStart() + endIndex + 1);
 
         String functionBody = targetCode.substring(startIndex + 1, endIndex);
 
@@ -78,21 +80,25 @@ public class FunctionDefinitionFinder {
     }
 
     private int findMatchingBrace(String text, int startPos) {
+        System.out.println("==Text Start==");
+        System.out.println(text);
+        System.out.println("==Text End==");
         int braceCount = 1;
-
         for (int i = startPos + 1; i < text.length(); i++) {
             char c = text.charAt(i);
-
+            System.out.print(c);
             if (c == '{') {
                 braceCount++;
             } else if (c == '}') {
                 braceCount--;
                 if (braceCount == 0) {
+                    System.out.println("=======found=======");
                     return i;
                 }
             }
         }
 
+        System.out.println("=======notfound=======");
         return -1;
     }
 }

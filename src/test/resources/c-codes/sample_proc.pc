@@ -1,0 +1,173 @@
+/* 
+ * 샘플 Pro*C 파일 
+ * 테스트 목적으로 만들어진 코드입니다.
+ */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/* 전역 변수 선언 */
+int g_count = 0;
+
+/* 함수 선언 */
+void initDB();
+int executeQuery(char* sql);
+void cleanup();
+int processData(int id);
+
+/* 데이터베이스 초기화 함수 */
+void initDB() {
+    printf("데이터베이스 연결 초기화\n");
+    
+    EXEC SQL BEGIN DECLARE SECTION;
+    char username[20] = "testuser";
+    char password[20] = "testpass";
+    EXEC SQL END DECLARE SECTION;
+    
+    EXEC SQL CONNECT :username IDENTIFIED BY :password;
+    
+    if (EXEC SQL INCLUDE.sqlcode != 0) {
+        printf("연결 실패: %s\n", EXEC SQL INCLUDE.sqlerrm.sqlerrmc);
+        exit(1);
+    }
+    
+    printf("연결 성공\n");
+    logConnection("CONNECT");
+}
+
+/* 로그 기록 함수 */
+void logConnection(char* action) {
+    char log_message[100];
+    sprintf(log_message, "로그: %s 액션 수행됨", action);
+    printf("%s\n", log_message);
+    
+    writeLogFile(log_message);
+}
+
+/* 로그 파일 작성 함수 */
+void writeLogFile(char* message) {
+    FILE* fp = fopen("log.txt", "a");
+    if (fp != NULL) {
+        fprintf(fp, "%s\n", message);
+        fclose(fp);
+    }
+}
+
+/* SQL 쿼리 실행 함수 */
+int executeQuery(char* sql) {
+    int result = 0;
+    
+    EXEC SQL BEGIN DECLARE SECTION;
+    char query[1000];
+    int id;
+    char name[50];
+    EXEC SQL END DECLARE SECTION;
+    
+    strcpy(query, sql);
+    
+    /* SELECT 쿼리 실행 */
+    if (strncmp(sql, "SELECT", 6) == 0) {
+        EXEC SQL PREPARE stmt FROM :query;
+        EXEC SQL DECLARE c_cursor CURSOR FOR stmt;
+        EXEC SQL OPEN c_cursor;
+        
+        for (;;) {
+            EXEC SQL FETCH c_cursor INTO :id, :name;
+            if (EXEC SQL INCLUDE.sqlcode != 0) break;
+            
+            printf("ID: %d, Name: %s\n", id, name);
+            result++;
+            
+            /* 데이터 처리 */
+            processData(id);
+        }
+        
+        EXEC SQL CLOSE c_cursor;
+    } 
+    /* INSERT 쿼리 실행 */
+    else if (strncmp(sql, "INSERT", 6) == 0) {
+        EXEC SQL EXECUTE IMMEDIATE :query;
+        if (EXEC SQL INCLUDE.sqlcode == 0) {
+            result = 1;
+        }
+    }
+    /* UPDATE 쿼리 실행 */
+    else if (strncmp(sql, "UPDATE", 6) == 0) {
+        EXEC SQL EXECUTE IMMEDIATE :query;
+        result = EXEC SQL INCLUDE.sqlerrd[2];  // 영향받은 행 수
+    }
+    /* DELETE 쿼리 실행 */
+    else if (strncmp(sql, "DELETE", 6) == 0) {
+        EXEC SQL EXECUTE IMMEDIATE :query;
+        result = EXEC SQL INCLUDE.sqlerrd[2];  // 영향받은 행 수
+    }
+    
+    return result;
+}
+
+/* 데이터 처리 함수 */
+int processData(int id) {
+    g_count++;
+    printf("데이터 처리 중: ID=%d (총 %d개 처리됨)\n", id, g_count);
+    
+    /* 추가 데이터 가공 */
+    int processed_value = transformData(id);
+    validateData(processed_value);
+    
+    return processed_value;
+}
+
+/* 데이터 변환 함수 */
+int transformData(int value) {
+    return value * 2;
+}
+
+/* 데이터 검증 함수 */
+void validateData(int value) {
+    if (value < 0) {
+        printf("오류: 음수 값 (%d)\n", value);
+    } else if (value > 1000) {
+        printf("경고: 매우 큰 값 (%d)\n", value);
+    }
+}
+
+/* 정리 함수 */
+void cleanup() {
+    printf("정리 작업 수행 중...\n");
+    
+    EXEC SQL COMMIT WORK RELEASE;
+    
+    printf("정리 완료\n");
+}
+
+/* 메인 함수 */
+int main() {
+    char query[1000];
+    int result;
+    
+    /* 초기화 */
+    initDB();
+    
+    /* 테이블 생성 */
+    strcpy(query, "CREATE TABLE test_table (id NUMBER, name VARCHAR2(50))");
+    executeQuery(query);
+    
+    /* 데이터 삽입 */
+    strcpy(query, "INSERT INTO test_table VALUES (1, 'Test Name 1')");
+    result = executeQuery(query);
+    printf("삽입된 행: %d\n", result);
+    
+    strcpy(query, "INSERT INTO test_table VALUES (2, 'Test Name 2')");
+    result = executeQuery(query);
+    printf("삽입된 행: %d\n", result);
+    
+    /* 데이터 조회 */
+    strcpy(query, "SELECT id, name FROM test_table");
+    result = executeQuery(query);
+    printf("조회된 행: %d\n", result);
+    
+    /* 정리 */
+    cleanup();
+    
+    return 0;
+}

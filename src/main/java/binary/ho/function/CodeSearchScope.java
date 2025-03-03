@@ -14,6 +14,9 @@ public class CodeSearchScope {
     }
 
     public String getRemainingCode() {
+        if (isOutOfScope()) {
+            return "";
+        }
         return code.substring(startIndex);
     }
 
@@ -21,7 +24,7 @@ public class CodeSearchScope {
         return startIndex;
     }
 
-    public void advance(int value) {
-        startIndex += value;
+    public void move(int value) {
+        startIndex = value;
     }
 }
