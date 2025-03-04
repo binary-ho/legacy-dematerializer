@@ -32,8 +32,6 @@ class SqlTypeTest {
     void extractCorrectSqlTypeFromQueryString(String query, String expectedType) {
         // when
         SqlType sqlType = SqlType.fromString(query);
-        System.out.println("[sqlType] " + sqlType);
-        System.out.println("[expected] " + expectedType);
 
         // then
         assertEquals(SqlType.valueOf(expectedType), sqlType);
