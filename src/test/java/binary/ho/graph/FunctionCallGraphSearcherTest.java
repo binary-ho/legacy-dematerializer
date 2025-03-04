@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-class CallGraphSearcherTest {
+class FunctionCallGraphSearcherTest {
 
     @Mock
     private CModules cModules;
@@ -48,7 +48,7 @@ class CallGraphSearcherTest {
         when(function.hasNoCallee()).thenReturn(true);
 
         // when
-        Node result = CallGraphSearcher.searchFromModule(moduleName, cModules);
+        Node result = FunctionCallGraphSearcher.searchFromModule(moduleName, cModules);
 
         // then
         assertNotNull(result);
@@ -69,7 +69,7 @@ class CallGraphSearcherTest {
         when(function.hasNoCallee()).thenReturn(true);
 
         // when
-        Node result = CallGraphSearcher.searchFromModule(moduleName, cModules);
+        Node result = FunctionCallGraphSearcher.searchFromModule(moduleName, cModules);
 
         // then
         assertTrue(result.isLeaf());
@@ -93,7 +93,7 @@ class CallGraphSearcherTest {
         when(function.getCallees()).thenReturn(List.of(sqlCallee));
 
         // when
-        Node result = CallGraphSearcher.searchFromModule(moduleName, cModules);
+        Node result = FunctionCallGraphSearcher.searchFromModule(moduleName, cModules);
 
         // then
         assertFalse(result.isLeaf());
@@ -121,7 +121,7 @@ class CallGraphSearcherTest {
         when(function.getCallees()).thenReturn(List.of(selfCallee));
 
         // when
-        Node result = CallGraphSearcher.searchFromModule(moduleName, cModules);
+        Node result = FunctionCallGraphSearcher.searchFromModule(moduleName, cModules);
 
         // then
         assertFalse(result.isLeaf());

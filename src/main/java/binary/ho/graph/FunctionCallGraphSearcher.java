@@ -8,21 +8,22 @@ import binary.ho.module.CModules;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CallGraphSearcher {
+public class FunctionCallGraphSearcher {
 
     private final CModules CModules;
     private final VisitingNodes visitingNodes;
 
     private static final String QUERY_PREFIX = "(QUERY) ";
 
-    private CallGraphSearcher(CModules CModules) {
+    private FunctionCallGraphSearcher(CModules CModules) {
         this.CModules = CModules;
-        this.visitingNodes = new VisitingNodes();
+        visitingNodes = new VisitingNodes();
     }
 
     public static Node searchFromModule(String moduleName, CModules CModules) {
-        CallGraphSearcher callGraphSearcher = new CallGraphSearcher(CModules);
-        return callGraphSearcher.search(moduleName);
+        FunctionCallGraphSearcher functionCallGraphSearcher = new FunctionCallGraphSearcher(
+            CModules);
+        return functionCallGraphSearcher.search(moduleName);
     }
 
     private Node search(String moduleName) {

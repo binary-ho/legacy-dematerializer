@@ -58,6 +58,7 @@ public class CallGraphWriter {
             Node child = nextNodes.get(index);
             int nextRow = depthRowIndex.getNextRow(depth + 1);
             ChildPosition nextPosition = ChildPosition.getPosition(index, nextNodes);
+
             int nextDepthRow = writeNode(child, depth + 1, nextRow, nextPosition);
             depthRowIndex.setNextRow(depth + 1, nextDepthRow);
 

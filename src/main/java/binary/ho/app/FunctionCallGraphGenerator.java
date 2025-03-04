@@ -2,7 +2,7 @@ package binary.ho.app;
 
 import binary.ho.cache.CacheFileLoader;
 import binary.ho.file.FileNameExtractor;
-import binary.ho.graph.CallGraphSearcher;
+import binary.ho.graph.FunctionCallGraphSearcher;
 import binary.ho.graph.Node;
 import binary.ho.module.CModules;
 import binary.ho.writer.CallGraphWriter;
@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class CallGraphGenerator {
+public class FunctionCallGraphGenerator {
 
     private static final String CACHE_DIRECTORY = "cache/modules.ser";
     private static final String OUTPUT_DIRECTORY = "output";
@@ -18,7 +18,7 @@ public class CallGraphGenerator {
     private static final String EXCEL_EXTENSION = ".xlsx";
 
     public static void main(String[] args) {
-        System.out.println("=== Call Graph 생성 ===\n");
+        System.out.println("=== Function Call Graph 생성 ===\n");
 
         CModules cModules = loadModulesFromCacheFile();
         createOutputDirectory();
@@ -26,7 +26,7 @@ public class CallGraphGenerator {
     }
 
     private static void run(CModules cModules) {
-        System.out.println("콜 그래프 생성을 시작합니다.\n");
+        System.out.println("함수 콜 그래프 생성을 시작합니다.\n");
         System.out.println("종료: 'exit'나, Ctrl + C 입력 \n");
         Scanner scanner = new Scanner(System.in);
 
@@ -51,7 +51,7 @@ public class CallGraphGenerator {
     private static void generateCallGraph(CModules cModules, String moduleName) throws IOException {
         System.out.println("콜 그래프 생성 중...");
 
-        Node rootNode = CallGraphSearcher.searchFromModule(moduleName, cModules);
+        Node rootNode = FunctionCallGraphSearcher.searchFromModule(moduleName, cModules);
         String outputFilePath = getOutputFilePath(moduleName);
         CallGraphWriter.write(rootNode, outputFilePath);
         System.out.println("콜 그래프 생성 완료: " + outputFilePath);
