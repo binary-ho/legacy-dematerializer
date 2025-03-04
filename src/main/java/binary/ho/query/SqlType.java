@@ -40,9 +40,4 @@ public enum SqlType {
         }
         return QUERY;
     }
-
-    @Override
-    public String toString() {
-        return this.name();
-    }
 }

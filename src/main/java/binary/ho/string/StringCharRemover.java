@@ -7,15 +7,15 @@ public class StringCharRemover {
             return "empty";
         }
 
-        StringCharBounds bounds = new StringCharBounds(code);
+        StringCharBounds bounds = new StringCharBounds();
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < code.length(); i++) {
             char current = code.charAt(i);
-            if (bounds.outOfString() && bounds.isNotQuote(i)) {
+            if (bounds.outOfString() && bounds.isNotQuote(current)) {
                 stringBuilder.append(current);
                 continue;
             }
-            bounds.update(i);
+            bounds.update(current);
         }
         return stringBuilder.toString();
     }

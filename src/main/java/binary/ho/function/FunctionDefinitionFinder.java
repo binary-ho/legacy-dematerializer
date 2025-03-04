@@ -83,7 +83,6 @@ public class FunctionDefinitionFinder {
         int braceCount = 1;
         for (int i = startPos + 1; i < text.length(); i++) {
             char c = text.charAt(i);
-            System.out.print(c);
             if (c == '{') {
                 braceCount++;
             } else if (c == '}') {

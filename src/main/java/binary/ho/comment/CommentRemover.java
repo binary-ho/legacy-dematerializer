@@ -1,24 +1,36 @@
 package binary.ho.comment;
 
+import binary.ho.string.StringCharBounds;
+
 public class CommentRemover {
 
     private static final char SLASH = '/';
     private static final char STAR = '*';
-    public static final char END_OF_LINE = '\n';
+    private static final char NEWLINE = '\n';
 
     public static String removeComments(String code) {
+        if (code == null || code.isEmpty()) {
+            return code;
+        }
+
         StringBuilder result = new StringBuilder();
+        StringCharBounds stringBounds = new StringCharBounds();
+
         int index = 0;
         while (index < code.length()) {
             char current = code.charAt(index);
-            if (isStartOfLineComment(code, index)) {
-                index = getEndOfLineIndex(code, index);
-                continue;
-            }
+            stringBounds.update(current);
 
-            if (isStartOfBlockComment(code, index)) {
-                index = getEndOfBlockCommentIndex(code, index);
-                continue;
+            if (stringBounds.outOfString()) {
+                if (isStartOfLineComment(code, index)) {
+                    index = skipLineComment(code, index);
+                    continue;
+                }
+
+                if (isStartOfBlockComment(code, index)) {
+                    index = skipBlockComment(code, index);
+                    continue;
+                }
             }
 
             result.append(current);
@@ -31,13 +43,16 @@ public class CommentRemover {
         if (index + 1 >= code.length()) {
             return false;
         }
-        char current = code.charAt(index);
-        char next = code.charAt(index + 1);
-        return current == SLASH && next == SLASH;
+        return code.charAt(index) == SLASH && code.charAt(index + 1) == SLASH;
     }
 
-    private static int getEndOfLineIndex(String code, int index) {
-        while (index < code.length() && code.charAt(index) != END_OF_LINE) {
+    private static int skipLineComment(String code, int startIndex) {
+        int index = startIndex;
+        index += 2;
+        while (index < code.length()) {
+            if (code.charAt(index) == NEWLINE) {
+                break;
+            }
             index++;
         }
         return index;
@@ -47,23 +62,19 @@ public class CommentRemover {
         if (index + 1 >= code.length()) {
             return false;
         }
-        char current = code.charAt(index);
-        char next = code.charAt(index + 1);
-        return current == SLASH && next == STAR;
+        return code.charAt(index) == SLASH && code.charAt(index + 1) == STAR;
     }
 
-    private static int getEndOfBlockCommentIndex(String code, int index) {
+    private static int skipBlockComment(String code, int startIndex) {
+        int index = startIndex;
         index += 2;
-        while (isNotEndOfBlockComment(code, index)) {
+        while (index < code.length() - 1) {
+            if (code.charAt(index) == STAR && code.charAt(index + 1) == SLASH) {
+                index += 2;
+                return index;
+            }
             index++;
         }
-        return Math.min(index + 2, code.length());
-    }
-
-    private static boolean isNotEndOfBlockComment(String code, int index) {
-        if (index + 1 >= code.length()) {
-            return false;
-        }
-        return !(code.charAt(index) == STAR && code.charAt(index + 1) == SLASH);
+        return code.length();
     }
 }

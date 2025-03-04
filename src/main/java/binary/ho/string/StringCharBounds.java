@@ -2,7 +2,7 @@ package binary.ho.string;
 
 public class StringCharBounds {
 
-    private static final char STRING_QUOTE = '\"';
+    private static final char STRING_QUOTE = '"';
     private static final char CHAR_QUOTE = '\'';
     private static final char ESCAPE = '\\';
 
@@ -10,14 +10,10 @@ public class StringCharBounds {
     private boolean inChar = false;
     private boolean escaped = false;
 
-    private final String code;
-
-    public StringCharBounds(String code) {
-        this.code = code;
+    public StringCharBounds() {
     }
 
-    public void update(int index) {
-        char current = code.charAt(index);
+    public void update(char current) {
         if (outOfString()) {
             if (current == STRING_QUOTE) {
                 inString = true;
@@ -45,8 +41,7 @@ public class StringCharBounds {
         }
     }
 
-    public boolean isNotQuote(int index) {
-        char current = code.charAt(index);
+    public boolean isNotQuote(char current) {
         return current != STRING_QUOTE && current != CHAR_QUOTE;
     }
 
