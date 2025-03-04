@@ -10,8 +10,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.apache.poi:poi:3.17'
-    implementation 'org.apache.poi:poi-ooxml:3.17'
+    implementation 'org.apache.poi:poi:3.16'
+    implementation 'org.apache.poi:poi-ooxml:3.16'
 
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -21,4 +21,15 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+// 모든 의존성을 포함한 fat JAR 생성
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'binary.ho.app.CallGraphGenerator'
+    }
+    archiveBaseName = project.name + '-all'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
 }

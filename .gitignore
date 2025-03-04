@@ -41,3 +41,9 @@ bin/
 
 ### Dump files ###
 *.hprof
+
+### Cahce files ###
+cache/*
+
+### Output files ###
+output/*
