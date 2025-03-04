@@ -71,14 +71,14 @@ public class CallGraphGenerator {
     private static CModules loadFromCache() {
         CacheFileLoader<CModules> cModuleLoader = new CacheFileLoader<>(CACHE_DIRECTORY,
             CModules.class);
-        if (!cModuleLoader.isCached()) {
+        if (cModuleLoader.isNotCached()) {
             throw new IllegalStateException("CModule 파일이 존재하지 않습니다. 먼저 캐시 파일을 생성하세요.");
         }
         return cModuleLoader.loadFromFile();
     }
 
     private static String getOutputFilePath(String moduleName) {
-        String sanitizedModuleName = FileNameExtractor.extractLastPart(moduleName);
+        String sanitizedModuleName = FileNameExtractor.extractFileName(moduleName);
         return OUTPUT_DIRECTORY + File.separator +
             CALL_GRAPH_FILE_PREFIX + sanitizedModuleName + EXCEL_EXTENSION;
     }

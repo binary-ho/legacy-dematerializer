@@ -17,7 +17,7 @@ public class CModule implements Serializable {
     private final Function representativeFunction;
 
     public CModule(String filePath, List<Function> functions) {
-        this.moduleName = FileNameExtractor.extractLastPart(filePath);
+        this.moduleName = FileNameExtractor.extractFileName(filePath);
         this.representativeFunction = findRepresentativeFunction(this.moduleName, functions);
         this.functions = collectToMap(functions);
     }

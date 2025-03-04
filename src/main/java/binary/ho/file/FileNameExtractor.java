@@ -2,17 +2,21 @@ package binary.ho.file;
 
 public class FileNameExtractor {
 
-    private static final char DELIMETER = '_';
-    private static final char PATH_DELIMETER = '/';
+    private static final char WINDOW_PATH_DELIMITER = '\\';
+    private static final char PATH_DELIMITER = '/';
 
-    public static String extractLastPart(String filePath) {
+    public static String extractFileName(String filePath) {
         String fileName = getFileName(filePath);
-        String removedExtension = removeFileExtension(fileName);
-        return extractLastPartByDelimeter(removedExtension);
+        return removeFileExtension(fileName);
     }
 
     private static String getFileName(String filePath) {
-        int fileNameIndex = filePath.lastIndexOf(PATH_DELIMETER) + 1;
+        String fileName = removePath(filePath, PATH_DELIMITER);
+        return removePath(fileName, WINDOW_PATH_DELIMITER);
+    }
+
+    private static String removePath(String filePath, char pathDelimiter) {
+        int fileNameIndex = filePath.lastIndexOf(pathDelimiter) + 1;
         return filePath.substring(fileNameIndex);
     }
 
@@ -22,9 +26,5 @@ public class FileNameExtractor {
             return "";
         }
         return split[0];
-    }
-
-    private static String extractLastPartByDelimeter(String fileName) {
-        return fileName.substring(fileName.lastIndexOf(DELIMETER) + 1);
     }
 }
