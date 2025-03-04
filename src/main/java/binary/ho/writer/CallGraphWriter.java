@@ -49,32 +49,40 @@ public class CallGraphWriter {
 
         if (node.isLeaf()) {
             depthRowIndex.setNextRow(depth, rowIndex + 1);
-            return rowIndex + 1;
+            return rowIndex + 2;
         }
         depthRowIndex.setNextRow(depth + 1, rowIndex);
 
         List<Node> nextNodes = node.getNextNodes();
         for (int index = 0; index < nextNodes.size(); index++) {
             Node child = nextNodes.get(index);
-            int nextRowIndex = depthRowIndex.getNextRow(depth + 1);
+            int nextRow = depthRowIndex.getNextRow(depth + 1);
             ChildPosition nextPosition = ChildPosition.getPosition(index, nextNodes);
-            int newNextRowIndex = writeNode(child, depth + 1, nextRowIndex, nextPosition);
-            depthRowIndex.setNextRow(depth + 1, newNextRowIndex);
+            int nextDepthRow = writeNode(child, depth + 1, nextRow, nextPosition);
+            depthRowIndex.setNextRow(depth + 1, nextDepthRow);
 
-            if (index == nextNodes.size() - 1) {
-                for (int prevRow = nextRowIndex; prevRow >= rowIndex; prevRow--) {
-                    Row prevRowObj = getRow(prevRow);
-                    Cell prevCell = prevRowObj.getCell(depth + 1);
-                    if (prevCell == null) {
-                        prevCell = prevRowObj.createCell(depth + 1);
-                        prevCell.setCellValue(TREE_VERTICAL);
-                    }
-                }
+            if (isLast(index, nextNodes)) {
+                connectNodes(depth + 1, rowIndex, nextRow);
             }
         }
 
         depthRowIndex.setNextRow(depth, rowIndex + 1);
-        return depthRowIndex.getMaxRowBelowDepth(depth);
+        return depthRowIndex.getMaxRowBelowDepth(depth) + 1;
+    }
+
+    private boolean isLast(int index, List<Node> nextNodes) {
+        return index == nextNodes.size() - 1;
+    }
+
+    private void connectNodes(int depth, int startIndex, int endIndex) {
+        for (int currentRow = startIndex; currentRow <= endIndex; currentRow++) {
+            Row row = getRow(currentRow);
+            Cell cell = row.getCell(depth);
+            if (cell == null) {
+                cell = row.createCell(depth);
+                cell.setCellValue(TREE_VERTICAL);
+            }
+        }
     }
 
     private Row getRow(int currentRow) {
