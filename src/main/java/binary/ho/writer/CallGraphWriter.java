@@ -49,7 +49,7 @@ public class CallGraphWriter {
 
         if (node.isLeaf()) {
             depthRowIndex.setNextRow(depth, rowIndex + 1);
-            return rowIndex + 2;
+            return rowIndex + 1;
         }
         depthRowIndex.setNextRow(depth + 1, rowIndex);
 
