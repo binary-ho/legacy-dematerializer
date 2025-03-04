@@ -3,6 +3,7 @@ package binary.ho.writer;
 import binary.ho.graph.Node;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -19,7 +20,7 @@ public class CallGraphWriter {
     private static final int START_DEPTH = 0;
     private static final int START_ROW_INDEX = 1;
     private static final int COLUMN_WIDTH = 40;
-    private static final String ARROW = "→ ";
+    private static final String TREE_VERTICAL = " │";
 
     private CallGraphWriter(Node rootNode) {
         this.rootNode = rootNode;
@@ -36,30 +37,52 @@ public class CallGraphWriter {
 
     private void writeFromRootNode() {
         depthRowIndex.setNextRow(START_DEPTH, START_ROW_INDEX);
-        writeNode(rootNode, START_DEPTH, START_ROW_INDEX, false);
+        writeNode(rootNode, START_DEPTH, START_ROW_INDEX, ChildPosition.NO_PARENT);
     }
 
-    private int writeNode(Node node, int depth, int rowIndex, boolean hasParent) {
+    private int writeNode(Node node, int depth, int rowIndex, ChildPosition position) {
         Row row = getRow(rowIndex);
 
         Cell cell = row.createCell(depth);
-        String cellValue = getValue(node.getFunctionName(), hasParent);
+        String cellValue = getValue(node.getFunctionName(), position);
         cell.setCellValue(cellValue);
 
         if (node.isLeaf()) {
             depthRowIndex.setNextRow(depth, rowIndex + 1);
-            return rowIndex + 1;
+            return rowIndex + 2;
         }
         depthRowIndex.setNextRow(depth + 1, rowIndex);
 
-        for (Node child : node.getNextNodes()) {
-            int nextRowIndex = depthRowIndex.getNextRow(depth + 1);
-            int newNextRowIndex = writeNode(child, depth + 1, nextRowIndex, true);
-            depthRowIndex.setNextRow(depth + 1, newNextRowIndex);
+        List<Node> nextNodes = node.getNextNodes();
+        for (int index = 0; index < nextNodes.size(); index++) {
+            Node child = nextNodes.get(index);
+            int nextRow = depthRowIndex.getNextRow(depth + 1);
+            ChildPosition nextPosition = ChildPosition.getPosition(index, nextNodes);
+            int nextDepthRow = writeNode(child, depth + 1, nextRow, nextPosition);
+            depthRowIndex.setNextRow(depth + 1, nextDepthRow);
+
+            if (isLast(index, nextNodes)) {
+                connectNodes(depth + 1, rowIndex, nextRow);
+            }
         }
 
         depthRowIndex.setNextRow(depth, rowIndex + 1);
-        return depthRowIndex.getMaxRowBelowDepth(depth);
+        return depthRowIndex.getMaxRowBelowDepth(depth) + 1;
+    }
+
+    private boolean isLast(int index, List<Node> nextNodes) {
+        return index == nextNodes.size() - 1;
+    }
+
+    private void connectNodes(int depth, int startIndex, int endIndex) {
+        for (int currentRow = startIndex; currentRow <= endIndex; currentRow++) {
+            Row row = getRow(currentRow);
+            Cell cell = row.getCell(depth);
+            if (cell == null) {
+                cell = row.createCell(depth);
+                cell.setCellValue(TREE_VERTICAL);
+            }
+        }
     }
 
     private Row getRow(int currentRow) {
@@ -70,11 +93,8 @@ public class CallGraphWriter {
         return sheet.createRow(currentRow);
     }
 
-    private String getValue(String functionName, boolean hasParent) {
-        if (hasParent) {
-            return ARROW + functionName;
-        }
-        return functionName;
+    private String getValue(String functionName, ChildPosition childPosition) {
+        return childPosition.getBranch() + functionName;
     }
 
     private void writeToFile(String outputPath) throws IOException {
