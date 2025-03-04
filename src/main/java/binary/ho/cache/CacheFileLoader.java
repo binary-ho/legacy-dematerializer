@@ -18,12 +18,12 @@ public class CacheFileLoader<T extends Serializable> {
         this.cacheObjectType = cacheObjectType;
     }
 
-    public boolean isCached() {
-        return Files.exists(Paths.get(cacheFilePath));
+    public boolean isNotCached() {
+        return !Files.exists(Paths.get(cacheFilePath));
     }
 
     public T loadFromFile() {
-        if (!isCached()) {
+        if (isNotCached()) {
             throw new IllegalStateException("cache file not found: " + cacheFilePath);
         }
 
