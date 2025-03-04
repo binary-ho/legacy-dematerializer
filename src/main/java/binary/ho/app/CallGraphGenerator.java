@@ -32,8 +32,7 @@ public class CallGraphGenerator {
 
         while (true) {
             System.out.print("\n모듈 이름을 입력하세요");
-            String moduleName = scanner.nextLine().trim()
-                .toUpperCase();
+            String moduleName = scanner.nextLine().trim();
 
             if (moduleName.equalsIgnoreCase("exit")) {
                 System.out.println("프로그램을 종료합니다.");
