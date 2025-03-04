@@ -17,7 +17,7 @@ public class CModules implements Serializable {
 
     public CModule get(String moduleName) {
         return nameToModule.getOrDefault(
-            moduleName, MissingModuleFactory.create()
+            moduleName, MissingModuleFactory.create(moduleName)
         );
     }
 }

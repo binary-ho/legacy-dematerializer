@@ -29,7 +29,7 @@ public class CModule implements Serializable {
 
     private Function findRepresentativeFunction(String moduleName, List<Function> functions) {
         if (functions.isEmpty()) {
-            return MissingFunctionFactory.create();
+            return MissingFunctionFactory.create(moduleName);
         }
 
         return functions.stream()
