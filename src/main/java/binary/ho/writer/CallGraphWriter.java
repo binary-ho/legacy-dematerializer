@@ -3,6 +3,7 @@ package binary.ho.writer;
 import binary.ho.graph.Node;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -19,7 +20,7 @@ public class CallGraphWriter {
     private static final int START_DEPTH = 0;
     private static final int START_ROW_INDEX = 1;
     private static final int COLUMN_WIDTH = 40;
-    private static final String ARROW = "→ ";
+    private static final String TREE_VERTICAL = "│";
 
     private CallGraphWriter(Node rootNode) {
         this.rootNode = rootNode;
@@ -36,14 +37,14 @@ public class CallGraphWriter {
 
     private void writeFromRootNode() {
         depthRowIndex.setNextRow(START_DEPTH, START_ROW_INDEX);
-        writeNode(rootNode, START_DEPTH, START_ROW_INDEX, false);
+        writeNode(rootNode, START_DEPTH, START_ROW_INDEX, ChildPosition.NO_PARENT);
     }
 
-    private int writeNode(Node node, int depth, int rowIndex, boolean hasParent) {
+    private int writeNode(Node node, int depth, int rowIndex, ChildPosition position) {
         Row row = getRow(rowIndex);
 
         Cell cell = row.createCell(depth);
-        String cellValue = getValue(node.getFunctionName(), hasParent);
+        String cellValue = getValue(node.getFunctionName(), position);
         cell.setCellValue(cellValue);
 
         if (node.isLeaf()) {
@@ -52,10 +53,17 @@ public class CallGraphWriter {
         }
         depthRowIndex.setNextRow(depth + 1, rowIndex);
 
-        for (Node child : node.getNextNodes()) {
+        List<Node> nextNodes = node.getNextNodes();
+        for (int index = 0; index < nextNodes.size(); index++) {
+            Node child = nextNodes.get(index);
             int nextRowIndex = depthRowIndex.getNextRow(depth + 1);
-            int newNextRowIndex = writeNode(child, depth + 1, nextRowIndex, true);
+            ChildPosition nextPosition = ChildPosition.getPosition(index, nextNodes);
+            int newNextRowIndex = writeNode(child, depth + 1, nextRowIndex, nextPosition);
             depthRowIndex.setNextRow(depth + 1, newNextRowIndex);
+
+            if (ChildPosition.BOTTOM_CHILD == nextPosition) {
+                // 위로 거슬러 올라가면서 안 채워진 곳 전부 채움
+            }
         }
 
         depthRowIndex.setNextRow(depth, rowIndex + 1);
@@ -70,11 +78,8 @@ public class CallGraphWriter {
         return sheet.createRow(currentRow);
     }
 
-    private String getValue(String functionName, boolean hasParent) {
-        if (hasParent) {
-            return ARROW + functionName;
-        }
-        return functionName;
+    private String getValue(String functionName, ChildPosition childPosition) {
+        return childPosition.getBranch() + functionName;
     }
 
     private void writeToFile(String outputPath) throws IOException {
