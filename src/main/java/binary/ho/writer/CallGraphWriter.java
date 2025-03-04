@@ -20,7 +20,7 @@ public class CallGraphWriter {
     private static final int START_DEPTH = 0;
     private static final int START_ROW_INDEX = 1;
     private static final int COLUMN_WIDTH = 40;
-    private static final String TREE_VERTICAL = "│";
+    private static final String TREE_VERTICAL = " │";
 
     private CallGraphWriter(Node rootNode) {
         this.rootNode = rootNode;
@@ -61,8 +61,15 @@ public class CallGraphWriter {
             int newNextRowIndex = writeNode(child, depth + 1, nextRowIndex, nextPosition);
             depthRowIndex.setNextRow(depth + 1, newNextRowIndex);
 
-            if (ChildPosition.BOTTOM_CHILD == nextPosition) {
-                // 위로 거슬러 올라가면서 안 채워진 곳 전부 채움
+            if (index == nextNodes.size() - 1) {
+                for (int prevRow = nextRowIndex; prevRow >= rowIndex; prevRow--) {
+                    Row prevRowObj = getRow(prevRow);
+                    Cell prevCell = prevRowObj.getCell(depth + 1);
+                    if (prevCell == null) {
+                        prevCell = prevRowObj.createCell(depth + 1);
+                        prevCell.setCellValue(TREE_VERTICAL);
+                    }
+                }
             }
         }
 

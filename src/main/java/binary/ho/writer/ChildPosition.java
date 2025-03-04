@@ -4,9 +4,10 @@ import java.util.Collection;
 
 public enum ChildPosition {
 
-    TOP_CHILD("─── "),
+    TOP_CHILD_NO_SIBLING("─── "),
+    TOP_CHILD_WITH_SIBLING("┬── "),
     MIDDLE_CHILD("├── "),
-    BOTTOM_CHILD("└── "),
+    BOTTOM_CHILD(" └── "),
     NO_PARENT(""),
     ;
 
@@ -22,8 +23,10 @@ public enum ChildPosition {
 
     public static ChildPosition getPosition(int index, Collection<?> collection) {
         int lastIndex = collection.size() - 1;
-        if (index == 0) {
-            return TOP_CHILD;
+        if (index == 0 && index == lastIndex) {
+            return TOP_CHILD_NO_SIBLING;
+        } else if (index == 0) {
+            return TOP_CHILD_WITH_SIBLING;
         } else if (index == lastIndex) {
             return BOTTOM_CHILD;
         } else {
