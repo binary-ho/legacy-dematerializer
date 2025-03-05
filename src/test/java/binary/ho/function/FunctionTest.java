@@ -1,15 +1,19 @@
 package binary.ho.function;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import binary.ho.function.callee.Callee;
 import binary.ho.function.callee.CalleeType;
 import binary.ho.query.Query;
 import binary.ho.query.SqlType;
+import binary.ho.query.table.Table;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class FunctionTest {
 
@@ -44,12 +48,12 @@ class FunctionTest {
         // then
         assertEquals(functionName, function.getName());
         assertEquals(2, function.getCallees().size());
-        
+
         function.getCallees().forEach(callee -> {
             assertTrue(calleeNames.contains(callee.getName()));
             assertEquals(CalleeType.FUNCTION, callee.getType());
         });
-        
+
         assertFalse(function.hasNoCallee());
     }
 
@@ -59,8 +63,8 @@ class FunctionTest {
         // given
         String functionName = "testFunction";
         List<Query> queries = List.of(
-            new Query(SqlType.SELECT),
-            new Query(SqlType.INSERT)
+            new Query(SqlType.SELECT, Table.create("")),
+            new Query(SqlType.INSERT, Table.create(""))
         );
         List<String> calleeNames = List.of();
 
@@ -70,13 +74,13 @@ class FunctionTest {
         // then
         assertEquals(functionName, function.getName());
         assertEquals(2, function.getCallees().size());
-        
+
         List<String> expectedQueryTypes = List.of("SELECT", "INSERT");
         function.getCallees().forEach(callee -> {
             assertTrue(expectedQueryTypes.contains(callee.getName()));
             assertEquals(CalleeType.SQL, callee.getType());
         });
-        
+
         assertFalse(function.hasNoCallee());
     }
 
@@ -85,7 +89,7 @@ class FunctionTest {
     void createFunctionWithBothCallees() {
         // given
         String functionName = "testFunction";
-        List<Query> queries = List.of(new Query(SqlType.SELECT));
+        List<Query> queries = List.of(new Query(SqlType.SELECT, Table.create("")));
         List<String> calleeNames = List.of("callee1");
 
         // when
@@ -94,10 +98,10 @@ class FunctionTest {
         // then
         assertEquals(functionName, function.getName());
         assertEquals(2, function.getCallees().size());
-        
+
         boolean hasFunctionCallee = false;
         boolean hasSqlCallee = false;
-        
+
         for (Callee callee : function.getCallees()) {
             if (callee.getType() == CalleeType.FUNCTION && callee.getName().equals("callee1")) {
                 hasFunctionCallee = true;
@@ -106,7 +110,7 @@ class FunctionTest {
                 hasSqlCallee = true;
             }
         }
-        
+
         assertTrue(hasFunctionCallee, "함수 호출이 포함되어야 합니다");
         assertTrue(hasSqlCallee, "SQL 쿼리 호출이 포함되어야 합니다");
         assertFalse(function.hasNoCallee());
@@ -117,7 +121,9 @@ class FunctionTest {
     void testEquals() {
         // given
         Function function1 = Function.create("sameFunction", List.of(), List.of("callee1"));
-        Function function2 = Function.create("sameFunction", List.of(new Query(SqlType.SELECT)), List.of());
+        Function function2 = Function.create("sameFunction",
+            List.of(new Query(SqlType.SELECT, Table.create(""))),
+            List.of());
 
         // when & then
         assertEquals(function1, function2);

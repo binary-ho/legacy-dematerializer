@@ -1,14 +1,13 @@
 package binary.ho.query;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import binary.ho.config.TestConfigManager;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.regex.Pattern;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ProC_QueryParserTest {
 
@@ -26,10 +25,10 @@ class ProC_QueryParserTest {
     void parseSqlQueriesFromProCCode() {
         // given
         String code = "void function() {\n" +
-                      "    EXEC SQL SELECT * FROM employees;\n" +
-                      "    process();\n" +
-                      "    EXEC SQL INSERT INTO logs VALUES (:id);\n" +
-                      "}";
+            "    EXEC SQL SELECT * FROM EMPLOYEES;\n" +
+            "    process();\n" +
+            "    EXEC SQL INSERT INTO LOGS VALUES (:id);\n" +
+            "}";
 
         // when
         List<Query> queries = proC_queryParser.parse(code);
@@ -38,6 +37,10 @@ class ProC_QueryParserTest {
         assertEquals(2, queries.size());
         assertEquals(SqlType.SELECT, queries.get(0).getType());
         assertEquals(SqlType.INSERT, queries.get(1).getType());
+
+        // 테이블 이름 확인
+        assertEquals("EMPLOYEES", queries.get(0).getMainTable().getName());
+        assertEquals("LOGS", queries.get(1).getMainTable().getName());
     }
 
     @Test
@@ -45,11 +48,11 @@ class ProC_QueryParserTest {
     void parseMultilineSqlQueries() {
         // given
         String code = "void function() {\n" +
-                      "    EXEC SQL \n" +
-                      "        SELECT * \n" +
-                      "        FROM employees \n" +
-                      "        WHERE id = :id;\n" +
-                      "}";
+            "    EXEC SQL \n" +
+            "        SELECT * \n" +
+            "        FROM EMPLOYEES \n" +
+            "        WHERE id = :id;\n" +
+            "}";
 
         // when
         List<Query> queries = proC_queryParser.parse(code);
@@ -57,6 +60,7 @@ class ProC_QueryParserTest {
         // then
         assertEquals(1, queries.size());
         assertEquals(SqlType.SELECT, queries.get(0).getType());
+        assertEquals("EMPLOYEES", queries.get(0).getMainTable().getName());
     }
 
     @Test
@@ -64,9 +68,9 @@ class ProC_QueryParserTest {
     void returnEmptyListWhenNoSqlQueries() {
         // given
         String code = "void function() {\n" +
-                      "    int a = 10;\n" +
-                      "    process();\n" +
-                      "}";
+            "    int a = 10;\n" +
+            "    process();\n" +
+            "}";
 
         // when
         List<Query> queries = proC_queryParser.parse(code);
@@ -80,13 +84,13 @@ class ProC_QueryParserTest {
     void recognizeVariousSqlCommands() {
         // given
         String code = "void function() {\n" +
-                      "    EXEC SQL SELECT * FROM table1;\n" +
-                      "    EXEC SQL INSERT INTO table2 VALUES (:a, :b);\n" +
-                      "    EXEC SQL UPDATE table3 SET col = :val;\n" +
-                      "    EXEC SQL DELETE FROM table4;\n" +
-                      "    EXEC SQL COMMIT;\n" +
-                      "    EXEC SQL ROLLBACK;\n" +
-                      "}";
+            "    EXEC SQL SELECT * FROM TABLE1;\n" +
+            "    EXEC SQL INSERT INTO TABLE2 VALUES (:a, :b);\n" +
+            "    EXEC SQL UPDATE TABLE3 SET col = :val;\n" +
+            "    EXEC SQL DELETE FROM TABLE4;\n" +
+            "    EXEC SQL COMMIT;\n" +
+            "    EXEC SQL ROLLBACK;\n" +
+            "}";
 
         // when
         List<Query> queries = proC_queryParser.parse(code);
@@ -99,6 +103,14 @@ class ProC_QueryParserTest {
         assertEquals(SqlType.DELETE, queries.get(3).getType());
         assertEquals(SqlType.COMMIT, queries.get(4).getType());
         assertEquals(SqlType.ROLLBACK, queries.get(5).getType());
+
+        // 테이블 이름 확인
+        assertEquals("TABLE1", queries.get(0).getMainTable().getName());
+        assertEquals("TABLE2", queries.get(1).getMainTable().getName());
+        assertEquals("TABLE3", queries.get(2).getMainTable().getName());
+        assertEquals("TABLE4", queries.get(3).getMainTable().getName());
+        assertTrue(queries.get(4).getMainTable().getName().equals("TABLE_NOT_FOUND"));
+        assertTrue(queries.get(5).getMainTable().getName().equals("TABLE_NOT_FOUND"));
     }
 
     @Test
@@ -106,11 +118,11 @@ class ProC_QueryParserTest {
     void recognizeCursorCommands() {
         // given
         String code = "void function() {\n" +
-                      "    EXEC SQL DECLARE cur CURSOR FOR SELECT * FROM table;\n" +
-                      "    EXEC SQL OPEN cur;\n" +
-                      "    EXEC SQL FETCH cur INTO :var1, :var2;\n" +
-                      "    EXEC SQL CLOSE cur;\n" +
-                      "}";
+            "    EXEC SQL DECLARE cur CURSOR FOR SELECT * FROM table;\n" +
+            "    EXEC SQL OPEN cur;\n" +
+            "    EXEC SQL FETCH cur INTO :var1, :var2;\n" +
+            "    EXEC SQL CLOSE cur;\n" +
+            "}";
 
         // when
         List<Query> queries = proC_queryParser.parse(code);
@@ -121,5 +133,165 @@ class ProC_QueryParserTest {
         assertEquals(SqlType.OPEN, queries.get(1).getType());
         assertEquals(SqlType.FETCH, queries.get(2).getType());
         assertEquals(SqlType.CLOSE, queries.get(3).getType());
+    }
+
+    @Test
+    @DisplayName("서브쿼리가 있는 SELECT 문에서 메인 테이블을 올바르게 추출한다")
+    void extractMainTableFromSelectWithSubquery() {
+        // given
+        String code = "void function() {\n" +
+            "    EXEC SQL SELECT * FROM (SELECT id FROM INNER_TABLE) t, MAIN_TABLE WHERE t.id = MAIN_TABLE.id;\n"
+            + "}";
+
+        // when
+        List<Query> queries = proC_queryParser.parse(code);
+
+        // then
+        assertEquals(1, queries.size());
+        assertEquals(SqlType.SELECT, queries.get(0).getType());
+        assertEquals("VIEW_TABLE", queries.get(0).getMainTable().getName());
+    }
+
+    @Test
+    @DisplayName("JOIN이 있는 SELECT 문에서 첫 번째 테이블을 올바르게 추출한다")
+    void extractFirstTableFromSelectWithJoin() {
+        // given
+        String code = "void function() {\n" +
+            "    EXEC SQL SELECT * FROM TABLE_A JOIN TABLE_B ON TABLE_A.id = TABLE_B.id;\n" +
+            "}";
+
+        // when
+        List<Query> queries = proC_queryParser.parse(code);
+
+        // then
+        assertEquals(1, queries.size());
+        assertEquals(SqlType.SELECT, queries.get(0).getType());
+        assertEquals("TABLE_A", queries.get(0).getMainTable().getName());
+    }
+
+    @Test
+    @DisplayName("복잡한 중첩 서브쿼리가 있는 SELECT 문에서 메인 테이블을 올바르게 추출한다")
+    void extractMainTableFromSelectWithComplexNestedSubqueries() {
+        // given
+        String code = "void function() {\n" +
+            "    EXEC SQL SELECT * FROM (SELECT * FROM (SELECT id FROM DEEP_TABLE) d, INNER_TABLE WHERE d.id = INNER_TABLE.id) s, MAIN_TABLE WHERE s.id = MAIN_TABLE.id;\n"
+            +
+            "}";
+
+        // when
+        List<Query> queries = proC_queryParser.parse(code);
+
+        // then
+        assertEquals(1, queries.size());
+        assertEquals(SqlType.SELECT, queries.get(0).getType());
+        assertEquals("VIEW_TABLE", queries.get(0).getMainTable().getName());
+    }
+
+    @Test
+    @DisplayName("UNION이 있는 SELECT 문에서 첫 번째 쿼리의 테이블을 올바르게 추출한다")
+    void extractTableFromSelectWithUnion() {
+        // given
+        String code = "void function() {\n" +
+            "    EXEC SQL SELECT * FROM TABLE_A UNION SELECT * FROM TABLE_B;\n" +
+            "}";
+
+        // when
+        List<Query> queries = proC_queryParser.parse(code);
+
+        // then
+        assertEquals(1, queries.size());
+        assertEquals(SqlType.SELECT, queries.get(0).getType());
+        assertEquals("TABLE_A", queries.get(0).getMainTable().getName());
+    }
+
+    @Test
+    @DisplayName("여러 테이블이 콤마로 구분된 SELECT 문에서 첫 번째 테이블을 올바르게 추출한다")
+    void extractFirstTableFromSelectWithMultipleTables() {
+        // given
+        String code = "void function() {\n" +
+            "    EXEC SQL SELECT * FROM TABLE_A, TABLE_B, TABLE_C WHERE TABLE_A.id = TABLE_B.id AND TABLE_B.id = TABLE_C.id;\n"
+            +
+            "}";
+
+        // when
+        List<Query> queries = proC_queryParser.parse(code);
+
+        // then
+        assertEquals(1, queries.size());
+        assertEquals(SqlType.SELECT, queries.get(0).getType());
+        assertEquals("TABLE_A", queries.get(0).getMainTable().getName());
+    }
+
+    @Test
+    @DisplayName("INSERT 문에서 테이블 이름을 올바르게 추출한다")
+    void extractTableFromInsert() {
+        // given
+        String code = "void function() {\n" +
+            "    EXEC SQL INSERT INTO TARGET_TABLE (col1, col2) VALUES (:val1, :val2);\n" +
+            "}";
+
+        // when
+        List<Query> queries = proC_queryParser.parse(code);
+
+        // then
+        assertEquals(1, queries.size());
+        assertEquals(SqlType.INSERT, queries.get(0).getType());
+        assertEquals("TARGET_TABLE", queries.get(0).getMainTable().getName());
+    }
+
+    @Test
+    @DisplayName("UPDATE 문에서 테이블 이름을 올바르게 추출한다")
+    void extractTableFromUpdate() {
+        // given
+        String code = "void function() {\n" +
+            "    EXEC SQL UPDATE TARGET_TABLE SET col1 = :val1, col2 = :val2 WHERE id = :id;\n" +
+            "}";
+
+        // when
+        List<Query> queries = proC_queryParser.parse(code);
+
+        // then
+        assertEquals(1, queries.size());
+        assertEquals(SqlType.UPDATE, queries.get(0).getType());
+        assertEquals("TARGET_TABLE", queries.get(0).getMainTable().getName());
+    }
+
+    @Test
+    @DisplayName("DELETE 문에서 테이블 이름을 올바르게 추출한다")
+    void extractTableFromDelete() {
+        // given
+        String code = "void function() {\n" +
+            "    EXEC SQL DELETE FROM TARGET_TABLE WHERE id = :id;\n" +
+            "}";
+
+        // when
+        List<Query> queries = proC_queryParser.parse(code);
+
+        // then
+        assertEquals(1, queries.size());
+        assertEquals(SqlType.DELETE, queries.get(0).getType());
+        assertEquals("TARGET_TABLE", queries.get(0).getMainTable().getName());
+    }
+
+    @Test
+    @DisplayName("매우 복잡한 ProC SQL 구문에서 테이블 이름을 올바르게 추출한다")
+    void extractTableFromComplexProCSql() {
+        // given
+        String code = "void function() {\n" +
+            "    EXEC SQL\n" +
+            "    SELECT r.*, m.description\n" +
+            "    FROM RECURSIVE_CTE r\n" +
+            "    LEFT JOIN METADATA_TABLE m ON r.id = m.id\n" +
+            "    WHERE r.name LIKE :pattern\n" +
+            "    ORDER BY r.id;\n" +
+            "}";
+
+        // when
+        List<Query> queries = proC_queryParser.parse(code);
+
+        // then
+        assertEquals(1, queries.size());
+        assertEquals(SqlType.SELECT, queries.get(0).getType());
+        assertEquals("RECURSIVE_CTE", queries.get(0).getMainTable().getName());
     }
 }

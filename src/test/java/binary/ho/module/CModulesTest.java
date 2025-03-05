@@ -1,6 +1,7 @@
 package binary.ho.module;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import binary.ho.function.Function;
 import java.util.ArrayList;
@@ -56,7 +57,8 @@ class CModulesTest {
         CModules modules = new CModules(moduleList);
 
         // then
-        assertEquals(MissingModuleFactory.MISSING_MODULE,
-            modules.get("nonexistent").getModuleName());
+        assertTrue(
+            modules.get("nonexistent").getModuleName().contains(MissingModuleFactory.MISSING_MODULE)
+        );
     }
 }

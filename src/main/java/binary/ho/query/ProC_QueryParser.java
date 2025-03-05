@@ -1,5 +1,8 @@
 package binary.ho.query;
 
+import binary.ho.query.table.QueryMainTableParser;
+import binary.ho.query.table.Table;
+import binary.ho.query.table.TableKeyword;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -18,10 +21,23 @@ public class ProC_QueryParser {
 
         List<Query> queries = new LinkedList<>();
         while (matcher.find()) {
-            String query = matcher.group();
-            SqlType type = SqlType.fromString(query);
-            queries.add(new Query(type));
+            String proCQuery = matcher.group();
+            Query query = parseQueryText(proCQuery);
+            queries.add(query);
         }
         return queries;
+    }
+
+    private Query parseQueryText(String query) {
+        SqlType type = SqlType.fromString(query);
+
+        TableKeyword tableKeyword = TableKeyword.of(type);
+        if (tableKeyword == TableKeyword.NOT_SUPPORTED) {
+            return new Query(type, Table.createNotFoundTable());
+        }
+
+        String keyword = tableKeyword.getKeyword();
+        Table table = QueryMainTableParser.parseMainTableAfterKeyword(query, keyword);
+        return new Query(type, table);
     }
 }

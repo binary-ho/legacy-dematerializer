@@ -1,13 +1,14 @@
 package binary.ho.function.callee;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import binary.ho.query.Query;
 import binary.ho.query.SqlType;
+import binary.ho.query.table.Table;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class CalleeTest {
 
@@ -35,9 +36,9 @@ class CalleeTest {
     void createFromQueries() {
         // given
         List<Query> queries = List.of(
-            new Query(SqlType.SELECT),
-            new Query(SqlType.INSERT),
-            new Query(SqlType.UPDATE)
+            new Query(SqlType.SELECT, Table.create("table1")),
+            new Query(SqlType.INSERT, Table.create("table2")),
+            new Query(SqlType.UPDATE, Table.create("table3"))
         );
 
         // when
