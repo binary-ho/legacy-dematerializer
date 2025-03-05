@@ -1,7 +1,6 @@
 package binary.ho.function.callee;
 
 import binary.ho.query.Query;
-import binary.ho.query.SqlType;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,9 +25,8 @@ public class Callee implements Serializable {
 
     public static List<Callee> fromQueries(List<Query> queries) {
         return queries.stream()
-            .map(Query::getType)
-            .map(SqlType::name)
-            .map(queryType -> new Callee(queryType, CalleeType.SQL))
+            .map(Query::toString)
+            .map(query -> new Callee(query, CalleeType.SQL))
             .collect(Collectors.toList());
     }
 

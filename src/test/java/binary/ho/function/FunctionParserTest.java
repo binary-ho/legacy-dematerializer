@@ -186,13 +186,13 @@ class FunctionParserTest {
 
         for (Callee callee : fetchData.getCallees()) {
             if (callee.getType() == CalleeType.SQL) {
-                if (callee.getName().equals("SELECT")) {
+                if (callee.getName().contains("SELECT")) {
                     hasSelectQuery = true;
                 }
-                if (callee.getName().equals("INSERT")) {
+                if (callee.getName().contains("INSERT")) {
                     hasInsertQuery = true;
                 }
-            } else if (callee.getName().equals("processData")) {
+            } else if (callee.getName().contains("processData")) {
                 hasProcessDataCall = true;
             }
         }

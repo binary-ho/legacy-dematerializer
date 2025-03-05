@@ -46,11 +46,11 @@ class CalleeTest {
 
         // then
         assertEquals(3, callees.size());
-        assertEquals("SELECT", callees.get(0).getName());
+        assertTrue(callees.get(0).getName().contains("SELECT"));
         assertEquals(CalleeType.SQL, callees.get(0).getType());
-        assertEquals("INSERT", callees.get(1).getName());
+        assertTrue(callees.get(1).getName().contains("INSERT"));
         assertEquals(CalleeType.SQL, callees.get(1).getType());
-        assertEquals("UPDATE", callees.get(2).getName());
+        assertTrue(callees.get(2).getName().contains("UPDATE"));
         assertEquals(CalleeType.SQL, callees.get(2).getType());
     }
 

@@ -28,4 +28,9 @@ public class Query implements Serializable {
     public String getQuery() {
         return query;
     }
+
+    @Override
+    public String toString() {
+        return type + " " + mainTable + "\n" + query;
+    }
 }

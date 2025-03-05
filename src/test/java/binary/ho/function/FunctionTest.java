@@ -75,11 +75,14 @@ class FunctionTest {
         assertEquals(functionName, function.getName());
         assertEquals(2, function.getCallees().size());
 
-        List<String> expectedQueryTypes = List.of("SELECT", "INSERT");
-        function.getCallees().forEach(callee -> {
-            assertTrue(expectedQueryTypes.contains(callee.getName()));
-            assertEquals(CalleeType.SQL, callee.getType());
-        });
+        Callee callee1 = function.getCallees().get(0);
+        Callee callee2 = function.getCallees().get(1);
+
+        assertTrue(callee1.getName().contains(SqlType.SELECT.name()));
+        assertEquals(CalleeType.SQL, callee1.getType());
+
+        assertTrue(callee2.getName().contains(SqlType.INSERT.name()));
+        assertEquals(CalleeType.SQL, callee2.getType());
 
         assertFalse(function.hasNoCallee());
     }
@@ -103,10 +106,10 @@ class FunctionTest {
         boolean hasSqlCallee = false;
 
         for (Callee callee : function.getCallees()) {
-            if (callee.getType() == CalleeType.FUNCTION && callee.getName().equals("callee1")) {
+            if (callee.getType() == CalleeType.FUNCTION && callee.getName().contains("callee1")) {
                 hasFunctionCallee = true;
             }
-            if (callee.getType() == CalleeType.SQL && callee.getName().equals("SELECT")) {
+            if (callee.getType() == CalleeType.SQL && callee.getName().contains("SELECT")) {
                 hasSqlCallee = true;
             }
         }
