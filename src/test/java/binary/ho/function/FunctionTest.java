@@ -63,8 +63,8 @@ class FunctionTest {
         // given
         String functionName = "testFunction";
         List<Query> queries = List.of(
-            new Query(SqlType.SELECT, Table.create("")),
-            new Query(SqlType.INSERT, Table.create(""))
+            new Query(SqlType.SELECT, Table.create(""), ""),
+            new Query(SqlType.INSERT, Table.create(""), "")
         );
         List<String> calleeNames = List.of();
 
@@ -89,7 +89,7 @@ class FunctionTest {
     void createFunctionWithBothCallees() {
         // given
         String functionName = "testFunction";
-        List<Query> queries = List.of(new Query(SqlType.SELECT, Table.create("")));
+        List<Query> queries = List.of(new Query(SqlType.SELECT, Table.create(""), ""));
         List<String> calleeNames = List.of("callee1");
 
         // when
@@ -122,7 +122,7 @@ class FunctionTest {
         // given
         Function function1 = Function.create("sameFunction", List.of(), List.of("callee1"));
         Function function2 = Function.create("sameFunction",
-            List.of(new Query(SqlType.SELECT, Table.create(""))),
+            List.of(new Query(SqlType.SELECT, Table.create(""), "")),
             List.of());
 
         // when & then

@@ -9,10 +9,12 @@ public class Query implements Serializable {
 
     private final SqlType type;
     private final Table mainTable;
+    private final String query;
 
-    public Query(SqlType type, Table mainTable) {
+    public Query(SqlType type, Table mainTable, String query) {
         this.type = type;
         this.mainTable = mainTable;
+        this.query = query;
     }
 
     public SqlType getType() {
@@ -21,5 +23,9 @@ public class Query implements Serializable {
 
     public Table getMainTable() {
         return mainTable;
+    }
+
+    public String getQuery() {
+        return query;
     }
 }

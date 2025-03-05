@@ -33,11 +33,11 @@ public class ProC_QueryParser {
 
         TableKeyword tableKeyword = TableKeyword.of(type);
         if (tableKeyword == TableKeyword.NOT_SUPPORTED) {
-            return new Query(type, Table.createNotFoundTable());
+            return new Query(type, Table.createNotFoundTable(), query);
         }
 
         String keyword = tableKeyword.getKeyword();
         Table table = QueryMainTableParser.parseMainTableAfterKeyword(query, keyword);
-        return new Query(type, table);
+        return new Query(type, table, query);
     }
 }

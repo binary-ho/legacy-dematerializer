@@ -36,9 +36,9 @@ class CalleeTest {
     void createFromQueries() {
         // given
         List<Query> queries = List.of(
-            new Query(SqlType.SELECT, Table.create("table1")),
-            new Query(SqlType.INSERT, Table.create("table2")),
-            new Query(SqlType.UPDATE, Table.create("table3"))
+            new Query(SqlType.SELECT, Table.create("table1"), ""),
+            new Query(SqlType.INSERT, Table.create("table2"), ""),
+            new Query(SqlType.UPDATE, Table.create("table3"), "")
         );
 
         // when
