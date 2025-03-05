@@ -31,6 +31,6 @@ public class Query implements Serializable {
 
     @Override
     public String toString() {
-        return type + " " + mainTable + "\n" + query;
+        return type + " " + mainTable.getName() + "\n\n" + query;
     }
 }

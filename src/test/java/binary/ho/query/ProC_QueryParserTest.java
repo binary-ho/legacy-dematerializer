@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import binary.ho.config.TestConfigManager;
+import binary.ho.query.table.TableType;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -109,8 +110,10 @@ class ProC_QueryParserTest {
         assertEquals("TABLE2", queries.get(1).getMainTable().getName());
         assertEquals("TABLE3", queries.get(2).getMainTable().getName());
         assertEquals("TABLE4", queries.get(3).getMainTable().getName());
-        assertTrue(queries.get(4).getMainTable().getName().equals("TABLE_NOT_FOUND"));
-        assertTrue(queries.get(5).getMainTable().getName().equals("TABLE_NOT_FOUND"));
+        assertTrue(
+            queries.get(4).getMainTable().getName().equals(TableType.TABLE_NOT_FOUND.name()));
+        assertTrue(
+            queries.get(5).getMainTable().getName().equals(TableType.TABLE_NOT_FOUND.name()));
     }
 
     @Test
@@ -149,7 +152,7 @@ class ProC_QueryParserTest {
         // then
         assertEquals(1, queries.size());
         assertEquals(SqlType.SELECT, queries.get(0).getType());
-        assertEquals("VIEW_TABLE", queries.get(0).getMainTable().getName());
+        assertEquals(TableType.VIEW_TABLE.name(), queries.get(0).getMainTable().getName());
     }
 
     @Test
@@ -184,7 +187,7 @@ class ProC_QueryParserTest {
         // then
         assertEquals(1, queries.size());
         assertEquals(SqlType.SELECT, queries.get(0).getType());
-        assertEquals("VIEW_TABLE", queries.get(0).getMainTable().getName());
+        assertEquals(TableType.VIEW_TABLE.name(), queries.get(0).getMainTable().getName());
     }
 
     @Test

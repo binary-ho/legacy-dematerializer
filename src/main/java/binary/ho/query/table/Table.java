@@ -3,23 +3,25 @@ package binary.ho.query.table;
 public class Table {
 
     private final String name;
-    private final TableType type;
 
-    private Table(String name, TableType type) {
+    private Table(String name) {
         this.name = name;
-        this.type = type;
     }
 
     public static Table create(String name) {
-        return new Table(name, TableType.MAIN_TABLE);
+        return new Table(name);
     }
 
     public static Table createViewTable() {
-        return new Table(TableType.VIEW_TABLE.name(), TableType.VIEW_TABLE);
+        return new Table(TableType.VIEW_TABLE.name());
     }
 
     public static Table createNotFoundTable() {
-        return new Table(TableType.TABLE_NOT_FOUND.name(), TableType.TABLE_NOT_FOUND);
+        return new Table(TableType.TABLE_NOT_FOUND.name());
+    }
+
+    public static Table createNotSupportedTable() {
+        return new Table("");
     }
 
     public String getName() {

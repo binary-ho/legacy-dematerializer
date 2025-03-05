@@ -5,8 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -19,7 +21,8 @@ public class CallGraphWriter {
 
     private static final int START_DEPTH = 0;
     private static final int START_ROW_INDEX = 1;
-    private static final int COLUMN_WIDTH = 40;
+    private static final int COLUMN_WIDTH = 50;
+    private static final int ROW_HEIGHT = 350;
     private static final String TREE_VERTICAL = " │";
 
     private CallGraphWriter(Node rootNode) {
@@ -42,10 +45,10 @@ public class CallGraphWriter {
 
     private int writeNode(Node node, int depth, int rowIndex, ChildPosition position) {
         Row row = getRow(rowIndex);
+        row.setHeight((short) ROW_HEIGHT);
 
-        Cell cell = row.createCell(depth);
         String cellValue = getValue(node.getFunctionName(), position);
-        cell.setCellValue(cellValue);
+        createCell(row, depth, cellValue);
 
         if (node.isLeaf()) {
             depthRowIndex.setNextRow(depth, rowIndex + 1);
@@ -80,8 +83,7 @@ public class CallGraphWriter {
             Row row = getRow(currentRow);
             Cell cell = row.getCell(depth);
             if (cell == null) {
-                cell = row.createCell(depth);
-                cell.setCellValue(TREE_VERTICAL);
+                createCell(row, depth, TREE_VERTICAL);
             }
         }
     }
@@ -91,7 +93,9 @@ public class CallGraphWriter {
         if (row != null) {
             return row;
         }
-        return sheet.createRow(currentRow);
+        Row newRow = sheet.createRow(currentRow);
+        newRow.setHeight((short) ROW_HEIGHT); // 새로 생성된 행의 높이 고정
+        return newRow;
     }
 
     private String getValue(String functionName, ChildPosition childPosition) {
@@ -112,6 +116,19 @@ public class CallGraphWriter {
         sheet.setDefaultColumnWidth(COLUMN_WIDTH);
         createHeaderRow(sheet);
         return sheet;
+    }
+
+    private void createCell(Row row, int depth, String value) {
+        Cell cell = row.createCell(depth);
+        cell.setCellValue(value);
+        cell.setCellStyle(createCellStyle());
+    }
+
+    private CellStyle createCellStyle() {
+        CellStyle style = workbook.createCellStyle();
+        style.setWrapText(true);
+        style.setVerticalAlignment(VerticalAlignment.TOP);
+        return style;
     }
 
     private void createHeaderRow(Sheet sheet) {

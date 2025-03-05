@@ -62,9 +62,6 @@ public class QueryMainTableParser {
     }
 
     private static boolean isNotIdentifier(char current) {
-        if (Character.isLetterOrDigit(current)) {
-            return Character.isLowerCase(current);
-        }
-        return current != LOWER_BAR;
+        return !Character.isLetterOrDigit(current) && current != LOWER_BAR;
     }
 }
