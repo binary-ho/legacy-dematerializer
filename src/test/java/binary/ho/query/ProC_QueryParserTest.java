@@ -89,42 +89,6 @@ class ProC_QueryParserTest {
             "    EXEC SQL INSERT INTO TABLE2 VALUES (:a, :b);\n" +
             "    EXEC SQL UPDATE TABLE3 SET col = :val;\n" +
             "    EXEC SQL DELETE FROM TABLE4;\n" +
-            "    EXEC SQL COMMIT;\n" +
-            "    EXEC SQL ROLLBACK;\n" +
-            "}";
-
-        // when
-        List<Query> queries = proC_queryParser.parse(code);
-
-        // then
-        assertEquals(6, queries.size());
-        assertEquals(SqlType.SELECT, queries.get(0).getType());
-        assertEquals(SqlType.INSERT, queries.get(1).getType());
-        assertEquals(SqlType.UPDATE, queries.get(2).getType());
-        assertEquals(SqlType.DELETE, queries.get(3).getType());
-        assertEquals(SqlType.COMMIT, queries.get(4).getType());
-        assertEquals(SqlType.ROLLBACK, queries.get(5).getType());
-
-        // 테이블 이름 확인
-        assertEquals("TABLE1", queries.get(0).getMainTable().getName());
-        assertEquals("TABLE2", queries.get(1).getMainTable().getName());
-        assertEquals("TABLE3", queries.get(2).getMainTable().getName());
-        assertEquals("TABLE4", queries.get(3).getMainTable().getName());
-        assertTrue(
-            queries.get(4).getMainTable().getName().equals(TableType.TABLE_NOT_FOUND.name()));
-        assertTrue(
-            queries.get(5).getMainTable().getName().equals(TableType.TABLE_NOT_FOUND.name()));
-    }
-
-    @Test
-    @DisplayName("커서 관련 명령을 올바르게 인식한다")
-    void recognizeCursorCommands() {
-        // given
-        String code = "void function() {\n" +
-            "    EXEC SQL DECLARE cur CURSOR FOR SELECT * FROM table;\n" +
-            "    EXEC SQL OPEN cur;\n" +
-            "    EXEC SQL FETCH cur INTO :var1, :var2;\n" +
-            "    EXEC SQL CLOSE cur;\n" +
             "}";
 
         // when
@@ -132,10 +96,16 @@ class ProC_QueryParserTest {
 
         // then
         assertEquals(4, queries.size());
-        // DECLARE는 인식되지 않으므로 CURSOR나 SELECT, FROM 중 하나로 인식 - SqlType에 따라 다름
-        assertEquals(SqlType.OPEN, queries.get(1).getType());
-        assertEquals(SqlType.FETCH, queries.get(2).getType());
-        assertEquals(SqlType.CLOSE, queries.get(3).getType());
+        assertEquals(SqlType.SELECT, queries.get(0).getType());
+        assertEquals(SqlType.INSERT, queries.get(1).getType());
+        assertEquals(SqlType.UPDATE, queries.get(2).getType());
+        assertEquals(SqlType.DELETE, queries.get(3).getType());
+
+        // 테이블 이름 확인
+        assertEquals("TABLE1", queries.get(0).getMainTable().getName());
+        assertEquals("TABLE2", queries.get(1).getMainTable().getName());
+        assertEquals("TABLE3", queries.get(2).getMainTable().getName());
+        assertEquals("TABLE4", queries.get(3).getMainTable().getName());
     }
 
     @Test

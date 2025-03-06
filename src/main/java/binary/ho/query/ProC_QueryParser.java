@@ -23,6 +23,9 @@ public class ProC_QueryParser {
         while (matcher.find()) {
             String proCQuery = matcher.group();
             Query query = parseQueryText(proCQuery);
+            if (SqlType.EXCLUSIVE_TYPE == query.getType()) {
+                continue;
+            }
             queries.add(query);
         }
         return queries;
@@ -32,7 +35,7 @@ public class ProC_QueryParser {
         SqlType type = SqlType.fromString(query);
 
         TableKeyword tableKeyword = TableKeyword.of(type);
-        if (tableKeyword == TableKeyword.NOT_SUPPORTED) {
+        if (tableKeyword == TableKeyword.TABLE_NOT_FOUND) {
             return new Query(type, Table.createNotSupportedTable(), query);
         }
 

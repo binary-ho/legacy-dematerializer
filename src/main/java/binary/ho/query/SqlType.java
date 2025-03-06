@@ -1,43 +1,51 @@
 package binary.ho.query;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum SqlType {
 
     SELECT, INSERT, UPDATE, DELETE,
-    OPEN, FETCH, CLOSE,
-    COMMIT, ROLLBACK,
     CREATE, ALTER, DROP, TRUNCATE,
     MERGE,
-    QUERY;  // default value
+    OPEN, FETCH, CLOSE,
+    COMMIT, ROLLBACK,
+    EXCLUSIVE_TYPE,
+    NOT_FOUND;  // default value
 
     private static final Pattern SQL_KEYWORD_PATTERN = Pattern.compile("\\b[A-Z]+\\b");
-
-    private static final Map<String, SqlType> KEYWORD_TO_TYPE_MAP = new HashMap<>();
-
-    static {
-        for (SqlType type : values()) {
-            if (type != QUERY) {
-                KEYWORD_TO_TYPE_MAP.put(type.name(), type);
-            }
-        }
-    }
+    // TODO: 설정파일로 분리
+    private static final Set<SqlType> EXCLUSIVE_TYPES = Set.of(
+        OPEN, FETCH, CLOSE, COMMIT, ROLLBACK
+    );
 
     public static SqlType fromString(String query) {
         if (query == null || query.isEmpty()) {
-            return QUERY;
+            return NOT_FOUND;
         }
 
         Matcher matcher = SQL_KEYWORD_PATTERN.matcher(query);
         while (matcher.find()) {
             String keyword = matcher.group();
-            if (KEYWORD_TO_TYPE_MAP.containsKey(keyword)) {
-                return KEYWORD_TO_TYPE_MAP.get(keyword);
+            if (isNotFound(keyword)) {
+                continue;
             }
+            SqlType sqlType = valueOf(keyword);
+            if (EXCLUSIVE_TYPES.contains(sqlType)) {
+                return EXCLUSIVE_TYPE;
+            }
+            return sqlType;
         }
-        return QUERY;
+        return NOT_FOUND;
+    }
+
+    private static boolean isNotFound(String keyword) {
+        try {
+            valueOf(keyword);
+            return false;
+        } catch (IllegalArgumentException e) {
+            return true;
+        }
     }
 }

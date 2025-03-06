@@ -8,7 +8,7 @@ public enum TableKeyword {
     MERGE(SqlType.MERGE, "INTO"),
     UPDATE(SqlType.UPDATE, "UPDATE"),
     DELETE(SqlType.DELETE, "FROM"),
-    NOT_SUPPORTED(SqlType.QUERY, "MISSING"),
+    TABLE_NOT_FOUND(SqlType.NOT_FOUND, "MISSING"),
     ;
 
     private final SqlType sqlType;
@@ -29,6 +29,6 @@ public enum TableKeyword {
                 return tableKeyword;
             }
         }
-        return NOT_SUPPORTED;
+        return TABLE_NOT_FOUND;
     }
 }

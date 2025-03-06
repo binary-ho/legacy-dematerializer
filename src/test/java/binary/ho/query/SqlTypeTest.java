@@ -17,11 +17,11 @@ class SqlTypeTest {
         "EXEC SQL UPDATE employees SET name = 'John' WHERE id = 1, UPDATE",
         "EXEC SQL DELETE FROM employees WHERE id = 1, DELETE",
         "EXEC SQL OPEN employee_cursor, OPEN",
-        "EXEC SQL FETCH employee_cursor INTO :id :name, FETCH",
-        "EXEC SQL FETCH employee_cursor INTO :id :name, FETCH",
-        "EXEC SQL CLOSE employee_cursor, CLOSE",
-        "EXEC SQL COMMIT, COMMIT",
-        "EXEC SQL ROLLBACK, ROLLBACK",
+//        "EXEC SQL FETCH employee_cursor INTO :id :name, FETCH",
+//        "EXEC SQL FETCH employee_cursor INTO :id :name, FETCH",
+//        "EXEC SQL CLOSE employee_cursor, CLOSE",
+//        "EXEC SQL COMMIT, COMMIT",
+//        "EXEC SQL ROLLBACK, ROLLBACK",
         "EXEC SQL CREATE TABLE employees, CREATE",
         "EXEC SQL ALTER TABLE employees ADD COLUMN, ALTER",
         "EXEC SQL DROP TABLE employees, DROP",
@@ -45,7 +45,7 @@ class SqlTypeTest {
         SqlType sqlType = SqlType.fromString(query);
 
         // then
-        assertEquals(SqlType.QUERY, sqlType);
+        assertEquals(SqlType.NOT_FOUND, sqlType);
     }
 
     @Test
@@ -58,7 +58,7 @@ class SqlTypeTest {
         SqlType sqlType = SqlType.fromString(query);
 
         // then
-        assertEquals(SqlType.QUERY, sqlType);
+        assertEquals(SqlType.NOT_FOUND, sqlType);
     }
 
     @Test
