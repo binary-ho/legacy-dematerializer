@@ -14,7 +14,7 @@ public class FunctionCallGraphGenerator {
 
     private static final String CACHE_DIRECTORY = "cache/modules.ser";
     private static final String OUTPUT_DIRECTORY = "output";
-    private static final String CALL_GRAPH_FILE_PREFIX = "call_graph_";
+    private static final String CALL_GRAPH_FILE_PREFIX = "function_call_";
     private static final String EXCEL_EXTENSION = ".xlsx";
 
     public static void main(String[] args) {
@@ -31,7 +31,7 @@ public class FunctionCallGraphGenerator {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.print("\n모듈 이름을 입력하세요");
+            System.out.print("\n모듈 이름을 입력하세요: ");
             String moduleName = scanner.nextLine().trim();
 
             if (moduleName.equalsIgnoreCase("exit")) {

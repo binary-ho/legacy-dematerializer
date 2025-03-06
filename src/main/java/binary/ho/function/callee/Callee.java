@@ -1,5 +1,6 @@
 package binary.ho.function.callee;
 
+import binary.ho.function.Function;
 import binary.ho.query.Query;
 import java.io.Serializable;
 import java.util.List;
@@ -12,7 +13,7 @@ public class Callee implements Serializable {
     private final String name;
     private final CalleeType type;
 
-    protected Callee(String name, CalleeType type) {
+    public Callee(String name, CalleeType type) {
         this.name = name;
         this.type = type;
     }
@@ -27,6 +28,10 @@ public class Callee implements Serializable {
         return queries.stream()
             .map(SqlCallee::new)
             .collect(Collectors.toList());
+    }
+
+    public static Callee from(Function function) {
+        return new Callee(function.getName(), CalleeType.FUNCTION);
     }
 
     public String getName() {

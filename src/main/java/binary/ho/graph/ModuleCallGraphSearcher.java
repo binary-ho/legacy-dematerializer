@@ -35,14 +35,14 @@ public class ModuleCallGraphSearcher {
         String functionName = function.getName();
 
         if (visitingNodes.isVisiting(functionName)) {
-            return RecursiveNodeFactory.create(functionName);
+            return Node.createRecursiveNode(functionName);
         }
 
         visitingNodes.visit(functionName);
         List<Node> externalCallNodes = getExternalCallNodes(cModule, function);
         visitingNodes.exit(functionName);
 
-        return Node.createNode(function.getName(), externalCallNodes);
+        return Node.createNode(Callee.from(function), externalCallNodes);
     }
 
     private List<Node> getExternalCallNodes(CModule module, Function function) {
@@ -73,6 +73,6 @@ public class ModuleCallGraphSearcher {
     private Node createSqlNode(SqlCallee callee) {
         Query query = callee.getQuery();
         String cellValue = QueryCellValueBuilder.build(query);
-        return Node.createLeafNode(cellValue);
+        return Node.createSqlNode(cellValue);
     }
 }

@@ -5,10 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -18,6 +16,7 @@ public class CallGraphWriter {
     private final Workbook workbook;
     private final Sheet sheet;
     private final DepthRowIndex depthRowIndex;
+    private final CellCreator cellCreator;
 
     private static final int START_DEPTH = 0;
     private static final int START_ROW_INDEX = 1;
@@ -30,6 +29,7 @@ public class CallGraphWriter {
         this.workbook = new XSSFWorkbook();
         this.sheet = createSheet(rootNode, workbook);
         this.depthRowIndex = new DepthRowIndex();
+        this.cellCreator = new CellCreator(workbook);
     }
 
     public static void write(Node rootNode, String outputPath) throws IOException {
@@ -47,8 +47,7 @@ public class CallGraphWriter {
         Row row = getRow(rowIndex);
         row.setHeight((short) ROW_HEIGHT);
 
-        String cellValue = getValue(node.getFunctionName(), position);
-        createCell(row, depth, cellValue);
+        cellCreator.createFromCallee(row, depth, node.getCallee(), position);
 
         if (node.isLeaf()) {
             depthRowIndex.setNextRow(depth, rowIndex + 1);
@@ -83,7 +82,7 @@ public class CallGraphWriter {
             Row row = getRow(currentRow);
             Cell cell = row.getCell(depth);
             if (cell == null) {
-                createCell(row, depth, TREE_VERTICAL);
+                cellCreator.createFromValue(row, depth, TREE_VERTICAL);
             }
         }
     }
@@ -98,10 +97,6 @@ public class CallGraphWriter {
         return newRow;
     }
 
-    private String getValue(String functionName, ChildPosition childPosition) {
-        return childPosition.getBranch() + functionName;
-    }
-
     private void writeToFile(String outputPath) throws IOException {
         try (FileOutputStream fileOut = new FileOutputStream(outputPath)) {
             workbook.write(fileOut);
@@ -111,24 +106,11 @@ public class CallGraphWriter {
     }
 
     private Sheet createSheet(Node rootNode, Workbook workbook) {
-        String sheetName = rootNode.getFunctionName();
+        String sheetName = rootNode.getCallee().getName();
         Sheet sheet = workbook.createSheet(sheetName);
         sheet.setDefaultColumnWidth(COLUMN_WIDTH);
         createHeaderRow(sheet);
         return sheet;
-    }
-
-    private void createCell(Row row, int depth, String value) {
-        Cell cell = row.createCell(depth);
-        cell.setCellValue(value);
-        cell.setCellStyle(createCellStyle());
-    }
-
-    private CellStyle createCellStyle() {
-        CellStyle style = workbook.createCellStyle();
-        style.setWrapText(true);
-        style.setVerticalAlignment(VerticalAlignment.TOP);
-        return style;
     }
 
     private void createHeaderRow(Sheet sheet) {
