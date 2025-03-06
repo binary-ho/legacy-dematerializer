@@ -12,7 +12,7 @@ public class Callee implements Serializable {
     private final String name;
     private final CalleeType type;
 
-    private Callee(String name, CalleeType type) {
+    protected Callee(String name, CalleeType type) {
         this.name = name;
         this.type = type;
     }
@@ -25,8 +25,7 @@ public class Callee implements Serializable {
 
     public static List<Callee> fromQueries(List<Query> queries) {
         return queries.stream()
-            .map(Query::toString)
-            .map(query -> new Callee(query, CalleeType.SQL))
+            .map(SqlCallee::new)
             .collect(Collectors.toList());
     }
 

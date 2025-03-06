@@ -2,9 +2,11 @@ package binary.ho.graph;
 
 import binary.ho.function.Function;
 import binary.ho.function.callee.Callee;
-import binary.ho.function.callee.CalleeType;
+import binary.ho.function.callee.SqlCallee;
 import binary.ho.module.CModule;
 import binary.ho.module.CModules;
+import binary.ho.query.Query;
+import binary.ho.query.QueryCellValueBuilder;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,8 +14,6 @@ public class ModuleCallGraphSearcher {
 
     private final CModules CModules;
     private final VisitingNodes visitingNodes;
-
-    private static final String QUERY_PREFIX = "(QUERY) ";
 
     private ModuleCallGraphSearcher(CModules CModules) {
         this.CModules = CModules;
@@ -48,8 +48,8 @@ public class ModuleCallGraphSearcher {
     private List<Node> getExternalCallNodes(CModule module, Function function) {
         List<Node> externalCallNodes = new LinkedList<>();
         for (Callee callee : function.getCallees()) {
-            if (CalleeType.SQL == callee.getType()) {
-                externalCallNodes.add(createSqlNode(callee));
+            if (isSqlCallee(callee)) {
+                externalCallNodes.add(createSqlNode((SqlCallee) callee));
                 continue;
             }
 
@@ -66,7 +66,13 @@ public class ModuleCallGraphSearcher {
         return externalCallNodes;
     }
 
-    private Node createSqlNode(Callee callee) {
-        return Node.createLeafNode(QUERY_PREFIX + callee.getName());
+    private boolean isSqlCallee(Callee callee) {
+        return callee instanceof SqlCallee;
+    }
+
+    private Node createSqlNode(SqlCallee callee) {
+        Query query = callee.getQuery();
+        String cellValue = QueryCellValueBuilder.build(query);
+        return Node.createLeafNode(cellValue);
     }
 }
