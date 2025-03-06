@@ -12,14 +12,10 @@ public class QueryCellValueBuilder {
     public static String build(Query query) {
         SqlType queryType = query.getType();
         Table mainTable = query.getMainTable();
-        return QUERY_PREFIX
-            + queryType.name()
-            + " "
-            + mainTable.getName()
+        return QUERY_PREFIX + queryType.name() + " " + mainTable.getName()
             + LINE_BREAK
             + buildDtoName(queryType, mainTable)
-            + LINE_BREAK
-            + LINE_BREAK
+            + LINE_BREAK + LINE_BREAK
             + query.getQuery();
     }
 
