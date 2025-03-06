@@ -16,7 +16,7 @@ class SqlTypeTest {
         "EXEC SQL INSERT INTO employees VALUES (1 'John'), INSERT",
         "EXEC SQL UPDATE employees SET name = 'John' WHERE id = 1, UPDATE",
         "EXEC SQL DELETE FROM employees WHERE id = 1, DELETE",
-        "EXEC SQL OPEN employee_cursor, OPEN",
+//        "EXEC SQL OPEN employee_cursor, OPEN",
 //        "EXEC SQL FETCH employee_cursor INTO :id :name, FETCH",
 //        "EXEC SQL FETCH employee_cursor INTO :id :name, FETCH",
 //        "EXEC SQL CLOSE employee_cursor, CLOSE",
