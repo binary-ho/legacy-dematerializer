@@ -25,7 +25,8 @@ public enum SqlType {
             return NOT_FOUND;
         }
 
-        Matcher matcher = SQL_KEYWORD_PATTERN.matcher(query);
+        String upperCaseQuery = query.toUpperCase();
+        Matcher matcher = SQL_KEYWORD_PATTERN.matcher(upperCaseQuery);
         while (matcher.find()) {
             String keyword = matcher.group();
             if (isNotFound(keyword)) {
