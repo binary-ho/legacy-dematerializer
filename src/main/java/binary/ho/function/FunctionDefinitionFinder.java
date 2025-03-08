@@ -41,7 +41,7 @@ public class FunctionDefinitionFinder {
         }
 
         int startIndex = matcher.end() - 1;
-        int endIndex = findMatchingBrace(targetCode, startIndex);
+        int endIndex = findEndIndexByMatcher(targetCode, startIndex);
         if (endIndex == -1) {
             throw new IllegalStateException("No matching brace found. wrong file");
         }
@@ -66,7 +66,7 @@ public class FunctionDefinitionFinder {
         }
 
         int startIndex = matcher.end() - 1;
-        int endIndex = findMatchingBrace(targetCode, startIndex);
+        int endIndex = findEndIndexByMatcher(targetCode, startIndex);
         codeSearchScope.move(codeSearchScope.getScopeStart() + endIndex + 1);
 
         String functionBody = targetCode.substring(startIndex + 1, endIndex);
@@ -79,20 +79,12 @@ public class FunctionDefinitionFinder {
         return Function.create(functionName, queries, functionCalls);
     }
 
-    private int findMatchingBrace(String text, int startPos) {
-        int braceCount = 1;
-        for (int i = startPos + 1; i < text.length(); i++) {
-            char c = text.charAt(i);
-            if (c == '{') {
-                braceCount++;
-            } else if (c == '}') {
-                braceCount--;
-                if (braceCount == 0) {
-                    return i;
-                }
-            }
+    private int findEndIndexByMatcher(String code, int startIndex) {
+        String targetCode = code.substring(startIndex + 1);
+        Matcher matcher = functionDefinitionPattern.matcher(targetCode);
+        if (!matcher.find()) {
+            return code.length() - 1;
         }
-
-        return -1;
+        return startIndex + matcher.start();
     }
 }
