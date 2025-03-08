@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Node {
 
-    public static final String RECURSIVE_NODE_POSTFIX = " (RECURSIVE)";
+    private static final String RECURSIVE_NODE_POSTFIX = " (RECURSIVE)";
     private final Callee callee;
     private final List<Node> nextNodes;
 

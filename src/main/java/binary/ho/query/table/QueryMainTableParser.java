@@ -2,8 +2,8 @@ package binary.ho.query.table;
 
 public class QueryMainTableParser {
 
-    public static final char PARENTHESIS = '(';
-    public static final char LOWER_BAR = '_';
+    private static final char PARENTHESIS = '(';
+    private static final char LOWER_BAR = '_';
 
     public static Table parseMainTableAfterKeyword(String sql, String keyword) {
         if (!hasSqlTableKeyword(sql, keyword)) {
