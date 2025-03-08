@@ -1,6 +1,7 @@
 package binary.ho.function;
 
 import binary.ho.comment.CommentRemover;
+import binary.ho.query.QueryCommentRemover;
 import binary.ho.string.StringCharRemover;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,6 +31,7 @@ public class FunctionParser {
 
     private String cleanContent(String code) {
         String removedComments = CommentRemover.removeComments(code);
-        return StringCharRemover.remove(removedComments);
+        String removedQueryComments = QueryCommentRemover.removeComments(removedComments);
+        return StringCharRemover.remove(removedQueryComments);
     }
 }
