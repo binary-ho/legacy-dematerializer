@@ -75,16 +75,16 @@ class SqlTypeTest {
     }
 
     @Test
-    @DisplayName("대문자로 작성된 키워드만 인식한다")
+    @DisplayName("소문자로 작성된 키워드도 인식할 수 있다.")
     void onlyRecognizeUppercaseKeywords() {
         // given
-        String query = "select * from employees INSERT";  // 소문자 'select'은 인식되지 않아야 함
+        String query = "select * from employees INSERT";
 
         // when
         SqlType sqlType = SqlType.fromString(query);
 
         // then
-        assertEquals(SqlType.INSERT, sqlType);  // 첫 번째 대문자 키워드인 FROM이 인식되어야 함
+        assertEquals(SqlType.SELECT, sqlType);
     }
 
     @Test

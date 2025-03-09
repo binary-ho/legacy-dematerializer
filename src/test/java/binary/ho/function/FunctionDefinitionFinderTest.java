@@ -88,6 +88,7 @@ class FunctionDefinitionFinderTest {
 
         // then
         assertTrue(hasNext);
+        assertTrue(hasNext2);
         assertEquals("Test1", test1Function.getName());
         assertEquals("Test2", test2Function.getName());
     }
@@ -116,7 +117,7 @@ class FunctionDefinitionFinderTest {
     }
 
     @Test
-    @DisplayName("비정상적인 중괄호 패턴이 있는 경우 예외를 반환한다.")
+    @DisplayName("비정상적인 중괄호 패턴이 있어도 함수를 파싱할 수 있다.")
     void handleMalformedBraces() {
         // given
         String code = "void malformedFunction() { int a = 10; // missing closing brace\nvoid validFunction() { return; }";
@@ -127,8 +128,10 @@ class FunctionDefinitionFinderTest {
 
         // when
         // then
-        assertThrows(IllegalStateException.class,
-            () -> functionDefinitionFinder.next(codeSearchScope));
+        assertTrue(functionDefinitionFinder.hasNext(codeSearchScope));
+        Function function = functionDefinitionFinder.next(codeSearchScope);
+        assertEquals("malformedFunction", function.getName());
+//        assertDoesNotThrow(() -> functionDefinitionFinder.next(codeSearchScope));
     }
 
     @Test
