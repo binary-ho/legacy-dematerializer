@@ -8,10 +8,10 @@ import java.util.regex.Pattern;
 public class ConfigManager {
 
     // TODO: 분리
-    private static final String FUNCTION_DEFINITION_CONFIG = "/function_definition.properties";
-    private static final String FUNCTION_CALL_CONFIG = "/function_call.properties";
-    private static final String PROC_SQL_CONFIG = "/proc_sql.properties";
-    private static final String EXCLUDE_FUNCTIONS_CONFIG = "/exclude_functions.properties";
+    private static final String FUNCTION_DEFINITION_CONFIG = "/properties/function_definition.properties";
+    private static final String FUNCTION_CALL_CONFIG = "/properties/function_call.properties";
+    private static final String PROC_SQL_CONFIG = "/properties/proc_sql.properties";
+    private static final String EXCLUDE_FUNCTIONS_CONFIG = "/properties/exclude_functions.properties";
 
     private static final String FUNCTION_DEFINITION_PATTERN_KEY = "function.definition.pattern";
     private static final String FUNCTION_CALL_PATTERN_KEY = "function.call.pattern";

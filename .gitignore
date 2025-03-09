@@ -47,3 +47,7 @@ cache/*
 
 ### Output files ###
 output/*
+
+### properties files ###
+src/main/resources/properties/
+src/test/resources/properties/
