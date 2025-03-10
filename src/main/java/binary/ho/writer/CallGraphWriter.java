@@ -8,9 +8,9 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
-public class CallGraphWriter {
+public class CallGraphWriter implements AutoCloseable {
 
     private final Node rootNode;
     private final Workbook workbook;
@@ -26,16 +26,25 @@ public class CallGraphWriter {
 
     private CallGraphWriter(Node rootNode) {
         this.rootNode = rootNode;
-        this.workbook = new XSSFWorkbook();
+        this.workbook = getWorkbook();
         this.sheet = createSheet(rootNode, workbook);
         this.depthRowIndex = new DepthRowIndex();
         this.cellCreator = new CellCreator(workbook);
     }
 
-    public static void write(Node rootNode, String outputPath) throws IOException {
-        CallGraphWriter writer = new CallGraphWriter(rootNode);
-        writer.writeFromRootNode();
-        writer.writeToFile(outputPath);
+    private SXSSFWorkbook getWorkbook() {
+        SXSSFWorkbook workbook = new SXSSFWorkbook(1000);
+        workbook.setCompressTempFiles(true);
+        return workbook;
+    }
+
+    public static void write(Node rootNode, String outputPath) {
+        try (CallGraphWriter writer = new CallGraphWriter(rootNode)) {
+            writer.writeFromRootNode();
+            writer.writeToFile(outputPath);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void writeFromRootNode() {
@@ -117,5 +126,10 @@ public class CallGraphWriter {
         Row headerRow = sheet.createRow(0);
         Cell headerCell = headerRow.createCell(0);
         headerCell.setCellValue("시작 모듈: " + sheet.getSheetName());
+    }
+
+    @Override
+    public void close() throws Exception {
+        workbook.close();
     }
 }
