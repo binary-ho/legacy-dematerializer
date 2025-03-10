@@ -39,7 +39,7 @@ class CModuleSearcherTest {
 
     @Test
     @DisplayName("유효한 디렉토리에서 C 및 PC 파일을 찾아 모듈로 변환한다")
-    void searchFromValidDirectory() throws IOException {
+    void searchFromModuleFromValidDirectory() throws IOException {
         // given
         // C 파일 생성
         Path cFilePath = tempDir.resolve("module_file1.c");

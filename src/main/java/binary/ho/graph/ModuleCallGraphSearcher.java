@@ -10,22 +10,18 @@ import binary.ho.query.QueryCellValueBuilder;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ModuleCallGraphSearcher {
+public class ModuleCallGraphSearcher implements Searcher {
 
     private final CModules CModules;
     private final VisitingNodes visitingNodes;
 
-    private ModuleCallGraphSearcher(CModules CModules) {
+    public ModuleCallGraphSearcher(CModules CModules) {
         this.CModules = CModules;
         this.visitingNodes = new VisitingNodes();
     }
 
-    public static Node searchFromModule(String moduleName, CModules CModules) {
-        ModuleCallGraphSearcher callGraphSearcher = new ModuleCallGraphSearcher(CModules);
-        return callGraphSearcher.searchModule(moduleName);
-    }
-
-    private Node searchModule(String moduleName) {
+    @Override
+    public Node search(String moduleName) {
         CModule cModule = CModules.get(moduleName);
         return searchModule(cModule);
     }
@@ -54,7 +50,7 @@ public class ModuleCallGraphSearcher {
             }
 
             if (module.isExternalCall(callee.getName())) {
-                Node externalNode = searchModule(callee.getName());
+                Node externalNode = search(callee.getName());
                 externalCallNodes.add(externalNode);
                 continue;
             }

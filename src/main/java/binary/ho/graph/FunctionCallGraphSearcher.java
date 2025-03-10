@@ -10,29 +10,24 @@ import binary.ho.query.QueryCellValueBuilder;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FunctionCallGraphSearcher {
+public class FunctionCallGraphSearcher implements Searcher {
 
     private final CModules CModules;
     private final VisitingNodes visitingNodes;
 
-    private FunctionCallGraphSearcher(CModules CModules) {
+    public FunctionCallGraphSearcher(CModules CModules) {
         this.CModules = CModules;
         visitingNodes = new VisitingNodes();
     }
 
-    public static Node searchFromModule(String moduleName, CModules CModules) {
-        FunctionCallGraphSearcher functionCallGraphSearcher = new FunctionCallGraphSearcher(
-            CModules);
-        return functionCallGraphSearcher.search(moduleName);
-    }
-
-    private Node search(String moduleName) {
+    @Override
+    public Node search(String moduleName) {
         CModule cModule = CModules.get(moduleName);
         Function representativeFunction = cModule.getRepresentativeFunction();
-        return search(cModule, representativeFunction.getName());
+        return searchFunction(cModule, representativeFunction.getName());
     }
 
-    private Node search(CModule module, String current) {
+    private Node searchFunction(CModule module, String current) {
         if (visitingNodes.isVisiting(current)) {
             return Node.createRecursiveNode(current);
         }
@@ -61,7 +56,7 @@ public class FunctionCallGraphSearcher {
                 continue;
             }
 
-            Node next = search(module, callee.getName());
+            Node next = searchFunction(module, callee.getName());
             nextNodes.add(next);
         }
         return nextNodes;
