@@ -3,7 +3,7 @@ package binary.ho.app;
 import binary.ho.graph.ModuleCallGraphSearcher;
 import binary.ho.module.CModules;
 
-public class ModuleCallGraphGenerator {
+public class EagerModuleCallGraphApplication {
 
     private static final String CACHE_DIRECTORY = "cache/modules.ser";
     private static final String CALL_GRAPH_FILE_PREFIX = "module_graph_";

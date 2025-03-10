@@ -41,4 +41,8 @@ public class Callee implements Serializable {
     public CalleeType getType() {
         return type;
     }
+
+    public boolean isSqlCallee() {
+        return this instanceof SqlCallee;
+    }
 }

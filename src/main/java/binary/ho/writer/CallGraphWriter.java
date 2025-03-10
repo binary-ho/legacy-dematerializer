@@ -40,14 +40,14 @@ public class CallGraphWriter implements AutoCloseable {
 
     public static void write(Node rootNode, String outputPath) {
         try (CallGraphWriter writer = new CallGraphWriter(rootNode)) {
-            writer.writeFromRootNode();
+            writer.write();
             writer.writeToFile(outputPath);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void writeFromRootNode() {
+    public void write() {
         depthRowIndex.setNextRow(START_DEPTH, START_ROW_INDEX);
         writeNode(rootNode, START_DEPTH, START_ROW_INDEX, ChildPosition.NO_PARENT);
     }

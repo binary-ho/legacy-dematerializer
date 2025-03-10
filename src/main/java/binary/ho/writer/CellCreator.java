@@ -2,6 +2,9 @@ package binary.ho.writer;
 
 import binary.ho.function.callee.Callee;
 import binary.ho.function.callee.CalleeType;
+import binary.ho.function.callee.SqlCallee;
+import binary.ho.query.Query;
+import binary.ho.query.QueryCellValueBuilder;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -19,26 +22,39 @@ public class CellCreator {
 
     public void createFromCallee(Row row, int depth, Callee callee, ChildPosition position) {
         Cell cell = row.createCell(depth);
-
-        String cellValue = getCellValue(callee, position);
-        cell.setCellValue(cellValue);
-        cell.setCellStyle(getCellStyle(callee.getType()));
+        String cellValue = getValue(callee);
+        cell.setCellValue(drawPosition(position, cellValue));
+        cell.setCellStyle(getCellStyle(callee));
     }
 
     public void createFromValue(Row row, int depth, String value) {
         Cell cell = row.createCell(depth);
         cell.setCellValue(value);
-        cell.setCellStyle(getCellStyle(CalleeType.FUNCTION));
+        cell.setCellStyle(functionCellStyle);
     }
 
-    private String getCellValue(Callee callee, ChildPosition childPosition) {
-        return childPosition.getBranch() + callee.getName();
+    private String getValue(Callee callee) {
+        if (isSqlCallee(callee)) {
+            SqlCallee sqlCallee = (SqlCallee) callee;
+            Query query = sqlCallee.getQuery();
+            return QueryCellValueBuilder.build(query);
+        }
+
+        return callee.getName();
     }
 
-    private CellStyle getCellStyle(CalleeType calleeType) {
-        if (CalleeType.SQL == calleeType) {
+    private String drawPosition(ChildPosition childPosition, String value) {
+        return childPosition.getBranch() + value;
+    }
+
+    private CellStyle getCellStyle(Callee callee) {
+        if (isSqlCallee(callee)) {
             return sqlCellStyle;
         }
         return functionCellStyle;
+    }
+
+    private boolean isSqlCallee(Callee callee) {
+        return callee instanceof SqlCallee;
     }
 }
